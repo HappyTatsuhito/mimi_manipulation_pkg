@@ -63,6 +63,7 @@ class MimiControl(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.cmd_vel_pub.publish(self.twist_value)
             end_time = time.time()
             rate.sleep()
@@ -87,6 +88,13 @@ class MimiControl(object):
 >>>>>>> 60f5393... Debug for count, find by Jetson 10/8
 =======
 >>>>>>> a849b3f... first commit by Laptop 10/8
+=======
+            self.cmd_vel_pub.publish(self.twist_value)
+            end_time = time.time()
+            rate.sleep()
+        self.twist_value.angular.z = 0.0
+        self.cmd_vel_pub.publish(self.twist_value)
+>>>>>>> e3f5aca... Debug for count, find by Jetson 10/8
 
     def moveBase(self, rad_speed):
         for speed_i in range(10):
@@ -178,6 +186,7 @@ class RecognizeTools(object):
 >>>>>>> 1ea6bd2... changed the content of the action　by Laptop 10/12
             find_count += 1
             rotation_angle = 45 - (((find_count)%4)/2) * 90
+<<<<<<< HEAD
 =======
 =======
             object_name = object_name.target_name
@@ -214,6 +223,9 @@ class RecognizeTools(object):
         while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
             loop_count += 1
             rotation_angle = 45 - (((loop_count)%4)/2) * 90
+=======
+            print rotation_angle
+>>>>>>> e3f5aca... Debug for count, find by Jetson 10/8
             mimi_control.angleRotation(rotation_angle)
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -273,6 +285,7 @@ class RecognizeTools(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             object_list = bbox_list
         return object_count, object_list
 
@@ -285,6 +298,9 @@ class RecognizeTools(object):
 =======
             obejct_list = bbox_list
 >>>>>>> a849b3f... first commit by Laptop 10/8
+=======
+            object_list = bbox_list
+>>>>>>> e3f5aca... Debug for count, find by Jetson 10/8
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
