@@ -16,7 +16,7 @@ class ObjectRecognizer(object):
 
     def recognizerFeedback(self,msg):
         rospy.loginfo('feedback : %s'%(msg))
-        self.feedback_flg = msg.recog_feedback
+        self.feedback_flg = msg.recognize_feedback
         
     def recognizeObject(self,target_name):
         act = actionlib.SimpleActionClient('/manipulation/localize', ObjectRecognizerAction)

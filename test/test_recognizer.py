@@ -16,7 +16,12 @@ if __name__ == "__main__":
     find_object = rospy.ServiceProxy("/recognize/find", RecognizeFind)
     localize_object = rospy.ServiceProxy("/recognize/localize", RecognizeLocalize)
 
+    rospy.sleep(1.0)
+    rospy.loginfo("wait")
+
     rospy.wait_for_service("/recog/count")
+    rospy.sleep(1.0)
+    rospy.loginfo("wait2")
     res = count_object(target_name)
     rospy.loginfo("module : count\n", res.object_num, res.object_list)
     
