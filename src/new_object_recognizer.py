@@ -137,8 +137,6 @@ class RecognizeTools(object):
         self.update_time = 0 # darknetからpublishされた時刻を記録
         self.update_flg = False # darknetからpublishされたかどうかの確認
 
-        rospy.loginfo("start tools")
-
     def boundingBoxCB(self,bb):
         self.update_time = time.time()
         self.update_flg = True
@@ -156,6 +154,7 @@ class RecognizeTools(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 rospy.loginfo('initialize')
 =======
 #                rospy.loginfo('initialize') # test
@@ -163,6 +162,9 @@ class RecognizeTools(object):
 =======
                 rospy.loginfo('initialize') # test
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
+=======
+                rospy.loginfo('initialize')
+>>>>>>> f412440... Fourth debug by Jetson 11/12
             rate.sleep()
 
     def findObject(self, object_name='None'):
@@ -571,11 +573,16 @@ if __name__ == '__main__':
                     #前後進
                     move_count += 1
 <<<<<<< HEAD
+<<<<<<< HEAD
                     move_range = -0.8*(((move_count)%4)/2)+0.4
                     mimi_control.moveBase(move_range)
 =======
                     move_range = -0.4*(((move_count)%4)/2)+0.2
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
+=======
+                    move_range = -0.8*(((move_count)%4)/2)+0.4
+                    mimi_control.moveBase(move_range)
+>>>>>>> f412440... Fourth debug by Jetson 11/12
                     exist_flg = False
             else:
 <<<<<<< HEAD
@@ -584,6 +591,7 @@ if __name__ == '__main__':
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
+<<<<<<< HEAD
 <<<<<<< HEAD
             rospy.sleep(1.0) #preemptのズレ調整用
 =======
@@ -610,6 +618,9 @@ if __name__ == '__main__':
 =======
             #rospy.sleep(1.0) #preemptのズレ調整用
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
+=======
+            rospy.sleep(1.0) #preemptのズレ調整用
+>>>>>>> f412440... Fourth debug by Jetson 11/12
             if self.preempt_flg:
                 self.preempt_flg = False
                 break

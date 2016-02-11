@@ -117,6 +117,7 @@ def main(req):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
 =======
     while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
@@ -131,6 +132,9 @@ def main(req):
 =======
     while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
+=======
+    while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
+>>>>>>> f412440... Fourth debug by Jetson 11/12
         rospy.loginfo('\n----- Recognizer -----')
         recognize_flg, object_centroid = RA.recognizeObject(req.target_name)
         if recognize_flg:
