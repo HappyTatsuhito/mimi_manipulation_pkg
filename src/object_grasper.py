@@ -131,7 +131,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.5)
         object_centroid.x -= ((object_centroid.x-0.6)/1.5)
-        move_range = (0.17+object_centroid.x+0.15-(x+0.2))*4.7
+        move_range = (0.17+object_centroid.x+0.15-(x+0.2))*4.0
         self.moveBase(move_range*0.7)
         rospy.sleep(0.3)
         self.moveBase(move_range*0.4)
@@ -153,7 +153,7 @@ class ObjectGrasper(ArmPoseChanger):
         return grasp_flg
     
     def navigationPlaceCB(self,res):
-        target_dic = {'Eins':['desk', 'table'], 'Zwei':['cupboard'], 'Drei':['shelf'], 'vier':['chair']}
+        target_dic = {'Eins':['desk', 'table'], 'Zwei':['cupboard'], 'Drei':['shelf'], 'vier':['chair', 'couch']}
         for key,value in target_dic.items():
             if res.data in value:
                 self.navigation_place = key
