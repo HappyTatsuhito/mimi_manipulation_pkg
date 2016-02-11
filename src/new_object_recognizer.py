@@ -47,6 +47,7 @@ class MimiControl(object):
         end_time = time.time()
         while end_time - start_time <= target_time:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.cmd_vel_pub.publish(self.twist_value)
             end_time = time.time()
             rate.sleep()
@@ -59,6 +60,13 @@ class MimiControl(object):
         self.twist_value.angular.z = 0.0
         self.pub_twist.publish(self.twist_value)
 >>>>>>> e485a97... first commit by Laptop 10/8
+=======
+            self.cmd_vel_pub.publish(self.twist_value)
+            end_time = time.time()
+            rate.sleep()
+        self.twist_value.angular.z = 0.0
+        self.cmd_vel_pub.publish(self.twist_value)
+>>>>>>> 60f5393... Debug for count, find by Jetson 10/8
 
     def moveBase(self, rad_speed):
         for speed_i in range(10):
@@ -170,6 +178,7 @@ class RecognizeTools(object):
             #rotate
             find_count += 1
             rotation_angle = 45 - (((find_count)%4)/2) * 90
+            print rotation_angle
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(2.0)
 >>>>>>> e485a97... first commit by Laptop 10/8
@@ -214,12 +223,16 @@ class RecognizeTools(object):
         else:
             object_count = bbox_list.count(object_name)
 <<<<<<< HEAD
+<<<<<<< HEAD
             object_list = bbox_list
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
 =======
             obejct_list = bbox_list
+=======
+            object_list = bbox_list
+>>>>>>> 60f5393... Debug for count, find by Jetson 10/8
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
