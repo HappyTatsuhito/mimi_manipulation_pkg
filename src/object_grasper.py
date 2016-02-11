@@ -94,7 +94,7 @@ class ObjectGrasper(ArmPoseChanger):
         rospy.loginfo('\n----- Grasp Object -----')
         self.moveBase(-0.5)
         if self.navigation_place == 'Null':
-            y = object_centroid.z + 0.08
+            y = object_centroid.z + 0.05
         else:
             y = self.target_place[self.navigation_place] + 0.06
         #x = (y-0.75)/10+0.5
@@ -104,7 +104,7 @@ class ObjectGrasper(ArmPoseChanger):
             return False
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.5)
-        move_range = 0.5 + (object_centroid.x + 0.05 - x)*3.3
+        move_range = 0.5 + (object_centroid.x + 0.05 - x)*3.1
         # 0.5:後退量, 0.05:realsenseからshoulderまでのx軸の距離, 3.3:moveBaseの数値に変換(おおよそ)
         self.moveBase(move_range*0.7)
         rospy.sleep(0.3)

@@ -132,13 +132,16 @@ class JointController(MotorController):
             rospy.loginfo("ok")
             return True
         angle = self.origin_angle[4]
+        '''
         self.callMotorService(4, angle)
         while self.rotation_velocity[4] > 0 and not rospy.is_shutdown():
             pass
         rospy.sleep(0.5)
+        '''
         grasp_flg = True
         while abs(self.torque_error[4]) <= 50 and not rospy.is_shutdown():
             angle -= 10
+            self.callMotorService(4, angle)
             while self.rotation_velocity[4] > 15.0 and not rospy.is_shutdown():
                 pass
             if angle < 2900:
