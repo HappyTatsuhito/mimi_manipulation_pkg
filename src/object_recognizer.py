@@ -217,7 +217,7 @@ class RecognizeAction(object):
                     else:
                         # retry
                         rospy.loginfo('There is not object in front.')
-                        object_angle *= 1.2 # kobukiが重いので
+                        object_angle *= 1.5 # kobukiが重いので
                         if abs(object_angle) < 10: object_angle=object_angle/abs(object_angle)*10
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)

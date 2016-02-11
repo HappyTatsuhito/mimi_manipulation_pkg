@@ -144,7 +144,7 @@ class JointController(MotorController):
             self.callMotorService(4, angle)
             while self.rotation_velocity[4] > 15.0 and not rospy.is_shutdown():
                 pass
-            if angle < 2900:
+            if angle < 2950:
                 grasp_flg = False
                 break;
         rospy.sleep(0.1)
