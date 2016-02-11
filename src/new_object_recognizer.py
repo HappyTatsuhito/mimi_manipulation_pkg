@@ -137,6 +137,8 @@ class RecognizeTools(object):
         self.update_time = 0 # darknetからpublishされた時刻を記録
         self.update_flg = False # darknetからpublishされたかどうかの確認
 
+        rospy.loginfo("start tools")
+
     def boundingBoxCB(self,bb):
         self.update_time = time.time()
         self.update_flg = True
@@ -145,14 +147,18 @@ class RecognizeTools(object):
     def initializeBBox(self):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
-            if time.time() - self.update_time > 1.5 and self.update_flg:
+            if time.time() - self.update_time > 1.5:# and not self.update_flg:
                 self.bbox = []
                 self.update_flg = False
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 rospy.loginfo('initialize')
+=======
+#                rospy.loginfo('initialize') # test
+>>>>>>> 735e11b... debuged the action by Jetson 20/10/31
             rate.sleep()
 
     def findObject(self, object_name='None'):
@@ -344,6 +350,7 @@ class RecognizeTools(object):
         image_range.right = bb[index_num].xmax
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         rospy.sleep(0.5)
 =======
         rospy.sleep(0.2)
@@ -351,6 +358,9 @@ class RecognizeTools(object):
 =======
         rospy.sleep(0.5)
 >>>>>>> 4c59708... debuged the action by Jetson 20/10/31
+=======
+        rospy.sleep(0.5)
+>>>>>>> 735e11b... debuged the action by Jetson 20/10/31
         Detector.image_range_pub.publish(image_range)
         while Detector.centroid_flg == False and not rospy.is_shutdown():
             pass
@@ -367,6 +377,7 @@ class RecognizeAction(object):
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -391,6 +402,10 @@ class RecognizeAction(object):
 >>>>>>> 41ea56a... Fixed third debug by Laptop 11/11
 =======
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
+=======
+        self.preempt_flg = False
+        self.recognize_tools = RecognizeTools()
+>>>>>>> 735e11b... debuged the action by Jetson 20/10/31
         self.act.start()
 >>>>>>> e485a97... first commit by Laptop 10/8
 
@@ -408,6 +423,7 @@ class RecognizeAction(object):
         action_feedback = ObjectRecognizerFeedback()
         action_result = ObjectRecognizerResult()
         mimi_control = MimiControl()
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -502,6 +518,20 @@ if __name__ == '__main__':
 =======
                     object_angle = math.atan2(object_centroide.y, object_centroid.x)/math.pi*180
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
+=======
+        #recognize_tools = RecognizeTools()
+        move_count = 0
+        while not rospy.is_shutdown():
+            bb = self.recognize_tools.bbox
+            object_count, _ = self.recognize_tools.countObject(target_name, bb)
+            rospy.loginfo(object_count)
+            exist_flg = bool(object_count)
+            if exist_flg:
+                object_centroid = self.recognize_tools.localizeObject(target_name, bb)
+                if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
+                    object_centroid.y += 0.08 # calibrate RealSenseCamera d435
+                    object_angle = math.atan2(object_centroid.y, object_centroid.x)/math.pi*180
+>>>>>>> 735e11b... debuged the action by Jetson 20/10/31
                     if abs(object_angle) < 4.5:
                         # success
                         rospy.loginfo('Succeeded')
@@ -531,6 +561,7 @@ if __name__ == '__main__':
                     exist_flg = False
             else:
 <<<<<<< HEAD
+<<<<<<< HEAD
                 find_flg = self.recognize_tools.findObject(target_name)
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
@@ -550,6 +581,10 @@ if __name__ == '__main__':
 >>>>>>> a849b3f... first commit by Laptop 10/8
 =======
                 exist_flg = find_flg:
+=======
+                find_flg = self.recognize_tools.findObject(target_name)
+                exist_flg = find_flg
+>>>>>>> 735e11b... debuged the action by Jetson 20/10/31
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
@@ -563,6 +598,7 @@ if __name__ == '__main__':
     recognize_action = RecognizeAction()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> e485a97... first commit by Laptop 10/8
 =======
 #    recognize_tools = RecognizeTools()
@@ -571,4 +607,8 @@ if __name__ == '__main__':
 =======
     #recognize_action.recognize_tools.initializeBBox()
 >>>>>>> 41ea56a... Fixed third debug by Laptop 11/11
+=======
+#    recognize_tools = RecognizeTools()
+#    recognize_tools.initializeBBox()
+>>>>>>> 735e11b... debuged the action by Jetson 20/10/31
     rospy.spin()
