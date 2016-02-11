@@ -22,7 +22,7 @@ class MotorController(object):
         # ROS Service Client
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
-        self.origin_angle = [1870, 2275, 1890, 2048, 3500, 1800]
+        self.origin_angle = [1752, 2400, 1830, 2048, 3500, 1800]
         self.current_pose = [0]*5
         self.torque_error = [0]*5
         self.rotation_velocity = [0]*5
@@ -111,16 +111,16 @@ class JointController(MotorController):
         rospy.sleep(0.5)
         grasp_flg = True
         while abs(self.torque_error[4]) <= 50 and not rospy.is_shutdown():
-            angle -= 30
+            angle -= 10
             self.callMotorService(4, angle)
-            rospy.sleep(0.06)
-            while self.rotation_velocity[4] > 5.0 and not rospy.is_shutdown():
+            #rospy.sleep(0.06)
+            while self.rotation_velocity[4] > 15.0 and not rospy.is_shutdown():
                 pass
-            if angle < 2850:
+            if angle < 2900:
                 grasp_flg = False
                 break;
         rospy.sleep(0.1)
-        self.callMotorService(4, self.current_pose[4]-60)
+        self.callMotorService(4, self.current_pose[4]-70)
         print 'fin'
         return grasp_flg
 
@@ -208,7 +208,7 @@ class ArmPoseChanger(JointController):
         self.armController(shoulder_param, elbow_param, wrist_param)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
             pass
-        rospy.sleep(2.0)
+        rospy.sleep(1.0)
         wrist_error = abs(self.torque_error[3])
         give_time = time.time()
         while abs(wrist_error - abs(self.torque_error[3])) < 10 and time.time() - give_time < 5.0 and not rospy.is_shutdown():
