@@ -171,7 +171,7 @@ class ArmPoseChanger(JointController):
 
     def changeArmPose(self, cmd):
         if type(cmd) != str:
-            cmd = cmd.target
+            cmd = cmd.target_name
         rospy.loginfo('Chagnge arm command : %s'%cmd)
         if cmd == 'origin':
             self.originMode()
