@@ -85,6 +85,8 @@ class RecognizeTools(object):
         self.update_time = 0 # darknetからpublishされた時刻を記録
         self.update_flg = False # darknetからpublishされたかどうかの確認
 
+        rospy.loginfo("start tools")
+
     def boundingBoxCB(self,bb):
         self.update_time = time.time()
         self.update_flg = True
@@ -93,10 +95,10 @@ class RecognizeTools(object):
     def initializeBBox(self):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
-            if time.time() - self.update_time > 1.5 and self.update_flg:
+            if time.time() - self.update_time > 1.5:# and not self.update_flg:
                 self.bbox = []
                 self.update_flg = False
-                rospy.loginfo('initialize') # test
+#                rospy.loginfo('initialize') # test
             rate.sleep()
 
     def findObject(self, object_name='None'):
@@ -170,11 +172,11 @@ class RecognizeTools(object):
             return object_centroid
         index_num = bbox_list.index(object_name)
         image_range = ImageRange()
-        image_range.top = bb[object_name].ymin
-        image_range.bottom = bb[object_name].ymax
-        image_range.left = bb[object_name].xmin
-        image_range.right = bb[object_name].xmax
-        rospy.sleep(0.2)
+        image_range.top = bb[index_num].ymin
+        image_range.bottom = bb[index_num].ymax
+        image_range.left = bb[index_num].xmin
+        image_range.right = bb[index_num].xmax
+        rospy.sleep(0.5)
         Detector.image_range_pub.publish(image_range)
         while Detector.centroid_flg == False and not rospy.is_shutdown():
             pass
@@ -191,6 +193,8 @@ class RecognizeAction(object):
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
 
+        self.preempt_flg = False
+        self.recognize_tools = RecognizeTools()
         self.act.start()
 
     def actionPreempt(self):
@@ -204,17 +208,18 @@ class RecognizeAction(object):
         action_feedback = ObjectRecognizerFeedback()
         action_result = ObjectRecognizerResult()
         mimi_control = MimiControl()
-        recognize_tools = RecognizeTools()
+        #recognize_tools = RecognizeTools()
         move_count = 0
         while not rospy.is_shutdown():
-            bb = recognize_tools.bbox
-            object_count, _ = recognize_tools.countObject(target_name, bb)
+            bb = self.recognize_tools.bbox
+            object_count, _ = self.recognize_tools.countObject(target_name, bb)
+            rospy.loginfo(object_count)
             exist_flg = bool(object_count)
             if exist_flg:
-                object_centroid = recognize_tools.localizeObject(target_name)
+                object_centroid = self.recognize_tools.localizeObject(target_name, bb)
                 if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
                     object_centroid.y += 0.08 # calibrate RealSenseCamera d435
-                    object_angle = math.atan2(object_centroide.y, object_centroid.x)/math.pi*180
+                    object_angle = math.atan2(object_centroid.y, object_centroid.x)/math.pi*180
                     if abs(object_angle) < 4.5:
                         # success
                         rospy.loginfo('Succeeded')
@@ -232,8 +237,8 @@ class RecognizeAction(object):
                     move_range = -0.4*(((move_count)%4)/2)+0.2
                     exist_flg = False
             else:
-                find_flg = recognize_tools.findObject(target_name)
-                exist_flg = find_flg:
+                find_flg = self.recognize_tools.findObject(target_name)
+                exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
             if self.preempt_flg:
@@ -243,7 +248,7 @@ class RecognizeAction(object):
 
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
-    recognize_tools = RecognizeTools()
-    recognize_tools.initializeBBox()
     recognize_action = RecognizeAction()
+#    recognize_tools = RecognizeTools()
+#    recognize_tools.initializeBBox()
     rospy.spin()
