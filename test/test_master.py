@@ -30,6 +30,7 @@ if __name__ == "__main__":
     res = manipulation_master(target_name)
     rospy.loginfo("manipulation_master")
     rospy.loginfo(res.result)
+<<<<<<< HEAD
 >>>>>>> 0c855a3... enum testのデバッグ1 21/3/10 by Jetson
 =======
     rospy.init_node("test_master")
@@ -46,3 +47,5 @@ if __name__ == "__main__":
     res = manipulation_master(args[-1])
     rospy.loginfo("manipulation_master\n", res.result)
 >>>>>>> e6bb873... create testcode by Laptop 20/12/18
+=======
+>>>>>>> 0c855a3... enum testのデバッグ1 21/3/10 by Jetson

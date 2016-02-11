@@ -3,6 +3,7 @@
   <rosparam file="$(find mimi_manipulation_pkg)/config/object_dict.yaml" command="load" ns="object_dict"/> 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   <node pkg="mimi_manipulation_pkg" name="object_recognizer" type="object_recognizer.py" />
 =======
   <!-- <node pkg="mimi_manipulation_pkg" name="new_object_recognizer" type="new_object_recognizer.py" /> -->
@@ -10,6 +11,9 @@
 =======
   <!-- <node pkg="mimi_manipulation_pkg" name="object_recognizer" type="object_recognizer.py" /> -->
 >>>>>>> 34bb555... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
+=======
+  <node pkg="mimi_manipulation_pkg" name="object_recognizer" type="object_recognizer.py" />
+>>>>>>> 0c855a3... enum testのデバッグ1 21/3/10 by Jetson
   <node pkg="mimi_manipulation_pkg" name="centroid_detector" type="object_centroid_detector" />
   <!-- <rosparam file="$(find mimi_manipulation_pkg)/config/location_list.yaml" command="load"/> -->
   <node pkg="mimi_manipulation_pkg" name="object_grasper" type="object_grasper.py" />
