@@ -119,25 +119,35 @@ class RecognizeTools(object):
         if object_name == 'any':
             any_dict = {}
             for i in range(len(object_list)):
-                if object_list[i] in object_dict['any']:
+                if object_list[i] in self.object_dict['any']:
                     any_dict[object_list[i]] = bb[i].xmin
             sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
-            object_list = sorted_any_dict.keys()
+            object_list = []
+            for i in range(len(sorted_any_dict)):
+                object_list.append(sorted_any_dict[i][0])
+            object_count = len(object_list)
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
         Detector = CallDetector()
         if bb is None:
             bb = self.bbox
+        if type(object_name) != str:
+            object_name = object_name.target
+        object_list = []
+        for i in range(len(bb)):
+            object_list.append(bb[i].Class)
+        list_num = object_list.index(object_name)
         image_range = ImageRange()
-        image_range.top = bb[object_name].ymin
-        image_range.bottom = bb[object_name].ymax
-        image_range.left = bb[object_name].xmin
-        image_range.right = bb[object_name].xmax
+        image_range.top = bb[list_num].ymin
+        image_range.bottom = bb[list_num].ymax
+        image_range.left = bb[list_num].xmin
+        image_range.right = bb[list_num].xmax
         rospy.sleep(0.2)
         Detector.image_range_pub.publish(image_range)
         while Detector.centroid_flg == False and not rospy.is_shutdown():
-            pass
+            print 'wait'
+            #pass
         object_centroid = Detector.object_centroid
         Detector.centroid_flg = False
         return object_centroid
