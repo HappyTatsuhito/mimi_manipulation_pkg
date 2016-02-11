@@ -41,7 +41,7 @@ class ObjectGrasper(ArmPoseChanger):
     def placeMode(self):
         self.moveBase(-0.6)
         # 
-        y = self.target_place[self.navigation_place] + 0.10
+        y = self.target_place[self.navigation_place] + 0.13
         #x = (y-0.78)/10+0.5
         x = 0.5
         joint_angle = self.inverseKinematics(x, y)
@@ -54,9 +54,11 @@ class ObjectGrasper(ArmPoseChanger):
         rospy.sleep(2.0)
         self.moveBase(0.4)
 
-        joint_angle = self.inverseKinematics(x, y-0.1)
+        joint_angle = self.inverseKinematics(x, y-0.03)
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
+        rospy.sleep(2.0)
         self.controlEndeffector(False)
+        rospy.sleep(2.0)
 
         #self.moveBase(-0.3)
         #self.controlShoulder(joint_angle[0]+0.1)
@@ -97,9 +99,9 @@ class ObjectGrasper(ArmPoseChanger):
         rospy.loginfo('\n----- Grasp Object -----')
         self.moveBase(-0.5)
         if self.navigation_place == 'Null':
-            y = object_centroid.z + 0.10
+            y = object_centroid.z + 0.08
         else:
-            y = self.target_place[self.navigation_place] + 0.08
+            y = self.target_place[self.navigation_place] + 0.10
         #x = (y-0.75)/10+0.5
         x = 0.475
         joint_angle = self.inverseKinematics(x, y)
@@ -114,7 +116,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.moveBase(move_range*0.4)
         grasp_flg = self.controlEndeffector(True)
         rospy.sleep(1.0)
-        self.controlShoulder(joint_angle[0]+10.0)
+        self.controlShoulder(joint_angle[0]+5.0)
         self.moveBase(-0.9)
         self.changeArmPose('carry')
         rospy.sleep(4.0)
