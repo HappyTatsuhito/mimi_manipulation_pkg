@@ -233,10 +233,14 @@ class ArmPoseChanger(JointController):
         self.armController(shoulder_param, elbow_param, wrist_param)
 
     def receiveMode(self):
-        shoulder_param = -35
-        elbow_param = 75
-        wrist_param = -35
+        self.controlHead(25)
+        rospy.sleep(0.5)
+        shoulder_param = -40
+        elbow_param = 70
+        wrist_param = -30
         self.armController(shoulder_param, elbow_param, wrist_param)
+        rospy.sleep(0.5)
+        self.controlEndeffector(False)
 
         rospy.wait_for_service('/detect/depth')
         endeffector_res = False
@@ -247,12 +251,14 @@ class ArmPoseChanger(JointController):
             count += 1
             start_time = time.time()
             straight_line_distance = 9.99
-            while time.time()-start_time<5.0 and straight_line_distance>0.6 and not rospy.is_shutdown():
-                depth_res = self.detect_depth(0, 0)
+            while time.time()-start_time<5.0 and straight_line_distance>0.3 and not rospy.is_shutdown():
+                depth_res = self.detect_depth(280, 360)
                 straight_line_distance = depth_res.centroid_point.x
+            #rospy.sleep(1.0)
             endeffector_res = self.controlEndeffector(True)
             rospy.sleep(1.5)
         self.carryMode()
+        self.controlHead(0)
         return endeffector_res
 
     def giveMode(self):

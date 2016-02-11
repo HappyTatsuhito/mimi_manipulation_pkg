@@ -109,7 +109,7 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
 
   //calibrate RealSenseCamera d435
   //簡単にしか処理してないので注意
-  centroid_y += 50;
+  centroid_y += 30;
 
   //RealSenseの高さ調整
   float theta = 90-(38.46+head_angle);
