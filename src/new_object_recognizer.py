@@ -167,6 +167,7 @@ class RecognizeTools(object):
 <<<<<<< HEAD
             object_name = object_name.target
 <<<<<<< HEAD
+<<<<<<< HEAD
         find_flg = False
         find_count = 0
 <<<<<<< HEAD
@@ -198,11 +199,14 @@ class RecognizeTools(object):
 =======
             object_name = object_name.target_name
 >>>>>>> 09036e0... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
+=======
+>>>>>>> 990dd81... debuged the action by Jetson 20/10/31
         find_flg, _ = self.countObject(object_name)
         loop_count = 0
         while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
             loop_count += 1
             rotation_angle = 45 - (((loop_count)%4)/2) * 90
+<<<<<<< HEAD
 >>>>>>> ae4f529... debuged the action by Jetson 20/10/31
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(3.0)
@@ -249,6 +253,11 @@ class RecognizeTools(object):
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(4.0)
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
+=======
+            mimi_control.angleRotation(rotation_angle)
+            rospy.sleep(3.0)
+            bbox_list = self.createBboxList(self.bbox)
+>>>>>>> 990dd81... debuged the action by Jetson 20/10/31
             if object_name == 'None':
                 find_flg = bool(len(self.bbox))
             elif object_name == 'any':
