@@ -78,6 +78,12 @@ class RecognizeTools(object):
         self.update_flg = True
         self.bbox = bb.boundingBoxes
 
+    def createBboxList(self,bb):
+        bbox_list = []
+        for i in range(len(bb)):
+            bbox_list.append(bb[i].Class)
+        return bbox_list
+
     def initializeBBox(self):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
@@ -93,18 +99,20 @@ class RecognizeTools(object):
             object_name = object_name.target
         find_flg = False
         find_count = 0
-        while not find_flg and find_count < 10 and not rospy.is_shutdowm():
+        while not find_flg and find_count < 10 and not rospy.is_shutdown():
+            print type(self.bbox)
+            bbox_list = self.createBboxList(self.bbox)
             #rotate
             find_count += 1
             rotation_angle = 45 - (((find_count)%4)/2) * 90
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(2.0)
             if object_name == 'None':
-                find_flg = bool(len(self.bbox))
+                find_flg = bool(len(bbox_list))
             elif object_name == 'any':
-                find_flg = bool(len(list(set(self.object_dict['any'])&set(self.bbox))))
+                find_flg = bool(len(list(set(self.object_dict['any'])&set(bbox_list))))
             else:
-                find_flg = object_name in self.bbox
+                find_flg = object_name in bbox_list
         return find_flg
             
     def countObject(self, object_name='None', bb=None):
