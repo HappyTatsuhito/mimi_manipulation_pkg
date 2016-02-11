@@ -63,14 +63,15 @@ class MimiControl(object):
         
 class CallDetector(object):
     def __init__(self):
-        detect_depth = rospy.ServiceProxy('/detect/depth',DetectDepth)
+        self.detect_depth = rospy.ServiceProxy('/detect/depth',DetectDepth)
 
         self.object_centroid = Point()
         
     def detectorService(self, center_x, center_y):
         rospy.wait_for_service("/detect/depth")
-        res = detect_depth(center_x, center_y)
+        res = self.detect_depth(center_x, center_y)
         self.object_centroid = res.centroid_point
+        rospy.loginfo(self.object_centroid)
         
 
 class RecognizeTools(object):
@@ -164,6 +165,7 @@ class RecognizeTools(object):
             object_centroid.y = numpy.nan
             object_centroid.z = numpy.nan
             return object_centroid
+        index_num = bbox_list.index(object_name)
         center_x = int((bb[index_num].ymin + bb[index_num].ymax)/2)
         center_y = int((bb[index_num].xmin + bb[index_num].xmax)/2)
         rospy.sleep(0.5)
