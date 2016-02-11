@@ -38,11 +38,11 @@ class MimiControl(object):
         start_time = time.time()
         end_time = time.time()
         while end_time - start_time <= target_time:
-            self.pub_twist.publish(self.twist_value)
+            self.cmd_vel_pub.publish(self.twist_value)
             end_time = time.time()
             rate.sleep()
         self.twist_value.angular.z = 0.0
-        self.pub_twist.publish(self.twist_value)
+        self.cmd_vel_pub.publish(self.twist_value)
 
     def moveBase(self, rad_speed):
         for speed_i in range(10):
@@ -119,6 +119,7 @@ class RecognizeTools(object):
             #rotate
             find_count += 1
             rotation_angle = 45 - (((find_count)%4)/2) * 90
+            print rotation_angle
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(2.0)
             if object_name == 'None':
@@ -147,7 +148,7 @@ class RecognizeTools(object):
             object_count = len(sorted_any_dict)
         else:
             object_count = bbox_list.count(object_name)
-            obejct_list = bbox_list
+            object_list = bbox_list
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
