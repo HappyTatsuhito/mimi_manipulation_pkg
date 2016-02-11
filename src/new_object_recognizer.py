@@ -177,19 +177,23 @@ class RecognizeTools(object):
         mimi_control = MimiControl()
         if type(object_name) != str:
             object_name = object_name.target
-        find_flg = False
-        find_count = 0
-        while not find_flg and find_count <= 3 and not rospy.is_shutdown():
-            bbox_list = self.createBboxList(self.bbox)
-            find_count += 1
-            rotation_angle = 45 - (((find_count)%4)/2) * 90
+        find_flg, _ = self.countObject(object_name)
+        loop_count = 0
+        while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
+            loop_count += 1
+            rotation_angle = 45 - (((loop_count)%4)/2) * 90
             mimi_control.angleRotation(rotation_angle)
+<<<<<<< HEAD
 <<<<<<< HEAD
             rospy.sleep(2.0)
 >>>>>>> e485a97... first commit by Laptop 10/8
 =======
             rospy.sleep(4.0)
 >>>>>>> 81dc8a8... changed the content of the action　by Laptop 10/12
+=======
+            rospy.sleep(3.0)
+            bbox_list = self.createBboxList(self.bbox)
+>>>>>>> df0c7f1... debuged the action by Jetson 20/10/31
             if object_name == 'None':
                 find_flg = bool(len(self.bbox))
             elif object_name == 'any':
