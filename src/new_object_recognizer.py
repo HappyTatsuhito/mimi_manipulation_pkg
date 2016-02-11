@@ -105,14 +105,14 @@ class RecognizeTools(object):
         mimi_control = MimiControl()
         if type(object_name) != str:
             object_name = object_name.target
-        find_flg = False
-        find_count = 0
-        while not find_flg and find_count <= 3 and not rospy.is_shutdown():
-            bbox_list = self.createBboxList(self.bbox)
-            find_count += 1
-            rotation_angle = 45 - (((find_count)%4)/2) * 90
+        find_flg, _ = self.countObject(object_name)
+        loop_count = 0
+        while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
+            loop_count += 1
+            rotation_angle = 45 - (((loop_count)%4)/2) * 90
             mimi_control.angleRotation(rotation_angle)
-            rospy.sleep(4.0)
+            rospy.sleep(3.0)
+            bbox_list = self.createBboxList(self.bbox)
             if object_name == 'None':
                 find_flg = bool(len(self.bbox))
             elif object_name == 'any':
