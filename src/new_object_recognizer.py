@@ -4,6 +4,7 @@
 import sys
 import time
 import math
+import numpy
 import rospy
 import rosparam
 import actionlib
@@ -94,6 +95,7 @@ class RecognizeTools(object):
             rate.sleep()
 
     def findObject(self, object_name='None'):
+        rospy.loginfo("module type : Find")
         mimi_control = MimiControl()
         if type(object_name) != str:
             object_name = object_name.target
@@ -115,32 +117,47 @@ class RecognizeTools(object):
         return find_flg
             
     def countObject(self, object_name='None', bb=None):
+        rospy.loginfo("module type : Count")
         if bb is None:
             bb = self.bbox
         if type(object_name) != str:
             object_name = object_name.target
         object_list = []
-        for i in range(len(bb)):
-            object_list.append(bb[i].Class)
-        object_count = object_list.count(object_name)
+        bbox_list = self.createBboxList(bb)
+        object_count = bbox_list.count(object_name)
         if object_name == 'any':
             any_dict = {}
-            for i in range(len(object_list)):
-                if object_list[i] in object_dict['any']:
-                    any_dict[object_list[i]] = bb[i].xmin
+            for i in range(len(bbox_list)):
+                if bbox_list[i] in self.object_dict['any']:
+                    any_dict[bbox_list[i]] = bb[i].xmin
             sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
-            object_list = sorted_any_dict.keys()
-        return object_count, object_list
+            for i in range(len(sorted_any_dict)):
+                object_list.append(sorted_any_dict[i][0])
+        else:
+            obejct_list = bbox_list
+        return object_count, bbox_list
 
     def localizeObject(self, object_name, bb=None):
+        rospy.loginfo("module type : Localize")
         Detector = CallDetector()
         if bb is None:
             bb = self.bbox
+        if type(object_name) != str:
+            object_name = object_name.target
+        object_centroid=Point()
+        bbox_list = self.createBboxList(bb)
+        exist_flg, _ = self.countObject(object_name)
+        if not exist_flg:
+            object_centroid.x = numpy.nan
+            object_centroid.y = numpy.nan
+            object_centroid.z = numpy.nan
+            return object_centroid
+        index_num = bbox_list.index(object_name)
         image_range = ImageRange()
-        image_range.top = bb[object_name].ymin
-        image_range.bottom = bb[object_name].ymax
-        image_range.left = bb[object_name].xmin
-        image_range.right = bb[object_name].xmax
+        image_range.top = bb[index_num].ymin
+        image_range.bottom = bb[index_num].ymax
+        image_range.left = bb[index_num].xmin
+        image_range.right = bb[index_num].xmax
         rospy.sleep(0.2)
         Detector.image_range_pub.publish(image_range)
         while Detector.centroid_flg == False and not rospy.is_shutdown():
