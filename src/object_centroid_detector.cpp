@@ -61,7 +61,7 @@ bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulatio
 
   //角度：0
   centroid_x = distance;
-  centroid_y = distance * tan(theta_y);
+  centroid_y = -1 * distance * tan(theta_y);
   centroid_z = distance * tan(theta_z);
   
   //角度：30
@@ -74,9 +74,9 @@ bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulatio
   centroid_x = sqrt(pow(distance,2)-(pow(centroid_y,2)+pow(centroid_z,2)));
   */
   
-  res.centroid_point.x = centroid_x;
-  res.centroid_point.y = centroid_y;
-  res.centroid_point.z = centroid_z + REALSENSE_HEIGHT;
+  res.centroid_point.x = centroid_x / 1000;
+  res.centroid_point.y = centroid_y / 1000;
+  res.centroid_point.z = centroid_z / 1000 + REALSENSE_HEIGHT;
   return true;  
 }
 
