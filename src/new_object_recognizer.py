@@ -9,20 +9,27 @@ import rosparam
 import actionlib
 # -- ros msgs --
 from geometry_msgs.msg import Twist, Point
-#from darknet_ros_msgs.msg import BoundingBoxes
+from darknet_ros_msgs.msg import BoundingBoxes
 from mimi_manipulation_pkg.msg import ImageRange
 # -- ros srvs --
 from mimi_manipulation_pkg.srv import RecognizeCount
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
-sys.path.insert(0, '/home/demlab/catkin_ws/src/mimi_common_pkg/scripts')
-from common_function import BaseCarrier
+sys.path.insert(0, '/home/nvidia/catkin_ws/src/mimi_common_pkg/scripts')
+#from common_function import BaseCarrier
 
-
+'''
 class MimiControl(BaseCarrier):
     def __init__(self):
         super(MimiControl,self).__init__()
+'''
+class MimiControl(object):
+    def __init__(self):
+        pass
+
+    def angleRotation(self, aaa):
+        pass
 
     def moveBase(self, rad_speed):
         cmd = Twist()
@@ -219,6 +226,7 @@ class RecognizeAction(object):
                 
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
-    obj_recog = ObjectRecognizer()
-    obj_recog.initializeBBox()
+    recognize_tools = RecognizeTools()
+    recognize_tools.initializeBBox()
+    recognize_action = RecognizeAction()
     rospy.spin()
