@@ -35,7 +35,10 @@ class RecognizerAction(object):
         limit_count = 3.0
         result = ResultState.wait
         while result == ResultState.wait and not rospy.is_shutdown():
+            print result
             result = act.get_result()
+            if not result: result = ResultState.wait
+            print result
             if self.recognize_feedback == ResultState.success:
                 loop_count = 0
                 limit_count -= 0.5
@@ -53,11 +56,15 @@ class RecognizerAction(object):
         recognize_flg = limit_count > loop_count
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         return recognize_flg, result.recognize_result
 =======
         return recognize_flg, result.recog_result
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
 =======
+=======
+        print result
+>>>>>>> 0c855a3... enum testのデバッグ1 21/3/10 by Jetson
         return recognize_flg, result.recognize_result
 >>>>>>> dade092... renamed action by Laptop 20/12/18
 
