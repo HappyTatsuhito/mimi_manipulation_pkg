@@ -204,7 +204,7 @@ class ArmPoseChanger(JointController):
     def giveMode(self):
         shoulder_param = -1.2
         elbow_param = 2.6
-        wrist_param = -0.7
+        wrist_param = -0.6
         self.armController(shoulder_param, elbow_param, wrist_param)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
             pass
