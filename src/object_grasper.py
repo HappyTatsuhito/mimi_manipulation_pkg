@@ -103,7 +103,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.5)
         move_range = object_centroid.x - ((object_centroid.x-0.6)/1.5)
-        move_range = (0.17+move_range+0.15-(x+0.2))*4.3 # 0.2：エンドエフェクタの長さ
+        move_range = (0.17+move_range+0.15-(x+0.2))*4.3
         self.moveBase(move_range*0.7)
         rospy.sleep(0.3)
         self.moveBase(move_range*0.4)
