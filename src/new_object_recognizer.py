@@ -41,6 +41,7 @@ class MimiControl(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         angular_speed = 70.0 #[deg/s]
 =======
         angular_speed = 90.0 #[deg/s]
@@ -51,6 +52,9 @@ class MimiControl(object):
 =======
         angular_speed = 90.0 #[deg/s]
 >>>>>>> a849b3f... first commit by Laptop 10/8
+=======
+        angular_speed = 70.0 #[deg/s]
+>>>>>>> cdac9d3... Recognizerの角度関係のデバッグとmasterとgrasperのパラメータ調整 by Jetson 20/12/5
         target_time = abs(1.76899*(degree /angular_speed))  #[s]
         if degree >= 0:
             self.twist_value.angular.z = (angular_speed * 3.14159263 / 180.0) #rad
@@ -482,6 +486,7 @@ class RecognizeAction(object):
                         # retry
                         rospy.loginfo('There is not object in front.')
 <<<<<<< HEAD
+<<<<<<< HEAD
                         '''
                         bias = 4
                         object_angle = int(bool(int(object_angle/bias)))*int(object_angle)+int(not int(object_angle/bias))*(object_angle/abs(object_angle))*bias+int(bool(int(object_angle/bias)))*object_angle%(object_angle/abs(object_angle))
@@ -491,6 +496,10 @@ class RecognizeAction(object):
 =======
                         bias = 2
                         object_angle = int(bool(int(x/bias)))*int(x)+int(not int(x/bias))*(x/abs(x))*bias+int(bool(int(x/bias)))*x%(x/abs(x))
+=======
+                        bias = 4
+                        object_angle = int(bool(int(object_angle/bias)))*int(object_angle)+int(not int(object_angle/bias))*(object_angle/abs(object_angle))*bias+int(bool(int(object_angle/bias)))*object_angle%(object_angle/abs(object_angle))
+>>>>>>> cdac9d3... Recognizerの角度関係のデバッグとmasterとgrasperのパラメータ調整 by Jetson 20/12/5
                         # ごめんなさい、どうしても一行で書きたかったんです。
 >>>>>>> 6148113... The lower limit of the angle was set. 11/19 by Laptop
                         mimi_control.angleRotation(object_angle)
