@@ -33,10 +33,14 @@ class MimiControl(object):
         while degree < -180:
             degree = degree + 360
 <<<<<<< HEAD
+<<<<<<< HEAD
         angular_speed = 70.0 #[deg/s]
 =======
         angular_speed = 90.0 #[deg/s]
 >>>>>>> e485a97... first commit by Laptop 10/8
+=======
+        angular_speed = 70.0 #[deg/s]
+>>>>>>> 8c7d05c... Recognizerの角度関係のデバッグとmasterとgrasperのパラメータ調整 by Jetson 20/12/5
         target_time = abs(1.76899*(degree /angular_speed))  #[s]
         if degree >= 0:
             self.twist_value.angular.z = (angular_speed * 3.14159263 / 180.0) #rad
@@ -418,8 +422,8 @@ if __name__ == '__main__':
                     else:
                         # retry
                         rospy.loginfo('There is not object in front.')
-                        bias = 2
-                        object_angle = int(bool(int(x/bias)))*int(x)+int(not int(x/bias))*(x/abs(x))*bias+int(bool(int(x/bias)))*x%(x/abs(x))
+                        bias = 4
+                        object_angle = int(bool(int(object_angle/bias)))*int(object_angle)+int(not int(object_angle/bias))*(object_angle/abs(object_angle))*bias+int(bool(int(object_angle/bias)))*object_angle%(object_angle/abs(object_angle))
                         # ごめんなさい、どうしても一行で書きたかったんです。
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)
