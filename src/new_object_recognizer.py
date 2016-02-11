@@ -85,8 +85,6 @@ class RecognizeTools(object):
         self.update_time = 0 # darknetからpublishされた時刻を記録
         self.update_flg = False # darknetからpublishされたかどうかの確認
 
-        rospy.loginfo("start tools")
-
     def boundingBoxCB(self,bb):
         self.update_time = time.time()
         self.update_flg = True
@@ -98,7 +96,7 @@ class RecognizeTools(object):
             if time.time() - self.update_time > 1.5 and self.update_flg:
                 self.bbox = []
                 self.update_flg = False
-                rospy.loginfo('initialize') # test
+                rospy.loginfo('initialize')
             rate.sleep()
 
     def findObject(self, object_name='None'):
@@ -244,14 +242,15 @@ class RecognizeAction(object):
                 else:
                     #前後進
                     move_count += 1
-                    move_range = -0.4*(((move_count)%4)/2)+0.2
+                    move_range = -0.8*(((move_count)%4)/2)+0.4
+                    mimi_control.moveBase(move_range)
                     exist_flg = False
             else:
                 find_flg = self.recognize_tools.findObject(target_name)
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
-            #rospy.sleep(1.0) #preemptのズレ調整用
+            rospy.sleep(1.0) #preemptのズレ調整用
             if self.preempt_flg:
                 self.preempt_flg = False
                 break

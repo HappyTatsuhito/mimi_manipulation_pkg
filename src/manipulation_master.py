@@ -73,7 +73,7 @@ def main(req):
     grasp_count = 0
     OR = ObjectRecognizer()
     OG = ObjectGrasper()
-    while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
+    while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
         rospy.loginfo('\n----- Recognizer -----')
         recognize_flg, object_centroid = OR.recognizeObject(req.target)
         if recognize_flg:
