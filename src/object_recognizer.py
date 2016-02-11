@@ -9,7 +9,7 @@ import rosparam
 import actionlib
 # -- ros msgs --
 from geometry_msgs.msg import Twist, Point
-#from darknet_ros_msgs.msg import BoundingBoxes
+from darknet_ros_msgs.msg import BoundingBoxes
 from mimi_manipulation_pkg.msg import ImageRange
 # -- ros srvs --
 from mimi_manipulation_pkg.srv import RecognizeCount
