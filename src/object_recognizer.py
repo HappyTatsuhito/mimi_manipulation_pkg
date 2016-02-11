@@ -208,7 +208,7 @@ class RecognizeAction(object):
             if exist_flg:
                 object_centroid = self.recognize_tools.localizeObject(target_name, bb)
                 if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
-                    object_centroid.y += 0.08 # calibrate RealSenseCamera d435
+                    object_centroid.y += 0.03 # calibrate RealSenseCamera d435
                     object_angle = math.atan2(object_centroid.y, object_centroid.x)/math.pi*180
                     if abs(object_angle) < 4.5:
                         # success
@@ -219,12 +219,7 @@ class RecognizeAction(object):
                     else:
                         # retry
                         rospy.loginfo('There is not object in front.')
-                        '''
-                        bias = 4
-                        object_angle = int(bool(int(object_angle/bias)))*int(object_angle)+int(not int(object_angle/bias))*(object_angle/abs(object_angle))*bias+int(bool(int(object_angle/bias)))*object_angle%(object_angle/abs(object_angle))
-                        # ごめんなさい、どうしても一行で書きたかったんです。
-                        '''
-                        if abs(object_angle) < 5: object_angle=object_angle/abs(object_angle)*5
+                        if abs(object_angle) < 10: object_angle=object_angle/abs(object_angle)*10
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)
                 else:
