@@ -100,7 +100,6 @@ class RecognizeTools(object):
         find_flg = False
         find_count = 0
         while not find_flg and find_count < 10 and not rospy.is_shutdown():
-            print type(self.bbox)
             bbox_list = self.createBboxList(self.bbox)
             #rotate
             find_count += 1
