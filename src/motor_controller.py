@@ -3,6 +3,7 @@
 
 import rospy
 import rosparam
+import numpy
 import math
 import threading
 import time
@@ -41,7 +42,7 @@ class MotorController(object):
         current_deg_list[2] *= -1
         current_deg_list[5] *= -1
         pub_deg_list = Float64MultiArray(data=current_deg_list)
-        rospy.loginfo(pub_deg_list.data)
+        #rospy.loginfo(pub_deg_list.data)
         self.motor_angle_pub.publish(pub_deg_list)
         
 
@@ -56,6 +57,9 @@ class MotorController(object):
     def stepToDeg(self,step):
         return round(step/4095.0*360.0-180, 1)
 
+    def radToDeg(self,rad):
+        return rad/math.pi*180
+    
     '''
     def radToStep(self,rad):
         return int((rad + math.pi) / (2*math.pi) * 4095)
@@ -166,6 +170,7 @@ class ArmPoseChanger(JointController):
         l3 = self.arm_specification['Endeffector_Length']
         x -= l3
         y -= l0
+        rospy.loginfo(x)
         data1 =  x*x+y*y+l1*l1-l2*l2
         data2 =  2*l1*math.sqrt(x*x+y*y)
         try:
@@ -176,7 +181,8 @@ class ArmPoseChanger(JointController):
             elbow_angle *= 2.1
             #2.1:ギア比
             angle_list = [shoulder_angle, elbow_angle, wrist_angle]
-            anglelist = map(stepToDeg, angle_list)
+            angle_list = map(self.radToDeg, angle_list)
+            rospy.loginfo(angle_list)
             return angle_list
         except ValueError:
             rospy.loginfo('I can not move arm.')

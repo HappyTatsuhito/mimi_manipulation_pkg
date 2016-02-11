@@ -4,6 +4,7 @@
 import rospy
 import time
 import math
+import numpy
 import threading
 import actionlib
 # -- ros msgs --
@@ -43,7 +44,7 @@ class ObjectGrasper(ArmPoseChanger):
         #x = (y-0.78)/10+0.5
         x = 0.5
         joint_angle = self.inverseKinematics(x, y)
-        if numpy.nun in joint_angle:
+        if numpy.nan in joint_angle:
             return
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.0)
@@ -99,7 +100,7 @@ class ObjectGrasper(ArmPoseChanger):
         #x = (y-0.75)/10+0.5
         x = 0.475
         joint_angle = self.inverseKinematics(x, y)
-        if numpy.nun in joint_angle:
+        if numpy.nan in joint_angle:
             return False
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.5)
