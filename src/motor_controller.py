@@ -37,7 +37,9 @@ class MotorController(object):
         deg_origin_angle = map(self.stepToDeg, self.origin_angle)
         deg_current_pose = map(self.stepToDeg, self.current_pose)
         current_deg_list = [x-y for (x,y) in zip(deg_current_pose, deg_origin_angle)]
-        current_deg_list = map(int, current_deg_list)
+        current_deg_list = [round(x, 1) for x in current_deg_list]
+        current_deg_list[2] *= -1
+        current_deg_list[5] *= -1
         pub_deg_list = Float64MultiArray(data=current_deg_list)
         rospy.loginfo(pub_deg_list.data)
         self.motor_angle_pub.publish(pub_deg_list)

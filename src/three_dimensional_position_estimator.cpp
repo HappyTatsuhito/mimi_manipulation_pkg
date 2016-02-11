@@ -52,7 +52,6 @@ void ThreeDimensionalPositionEstimator::realSenseCB(const sensor_msgs::ImageCons
 
 void ThreeDimensionalPositionEstimator::motorAngleCB(std_msgs::Float64MultiArray angle_list){
   head_angle = angle_list.data[5];
-  ROS_INFO("%f", head_angle);
 }
 
 bool ThreeDimensionalPositionEstimator::convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image){
@@ -94,8 +93,8 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
 
   float theta_y, theta_z, centroid_x, centroid_y, centroid_z;
 	
-  theta_y = ((req.center_y-320)*53.6/640)/180*M_PI;
-  theta_z = (-1*(req.center_x-240)*41.0/480)/180*M_PI;
+  theta_y = ((req.center_y-320)*54.2/640)/180*M_PI;
+  theta_z = (-1*(req.center_x-240)*44.0/480)/180*M_PI;
 
   //角度：0
   centroid_x = distance;
