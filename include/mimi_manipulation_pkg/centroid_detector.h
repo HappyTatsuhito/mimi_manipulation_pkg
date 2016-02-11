@@ -6,9 +6,14 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 <<<<<<< HEAD
+<<<<<<< HEAD
 //#include "/home/nvidia/catkin_ws/devel/include/mimi_manipulation_pkg/ImageRange.h"
 //#include "/home/tatsuhito/catkin_ws/devel/include/mimi_manipulation_pkg/ImageRange.h"
 #include "../../../../devel/include/mimi_manipulation_pkg/ImageRange.h"
+=======
+#include "/home/nvidia/catkin_ws/devel/include/mimi_manipulation_pkg/ImageRange.h"
+//#include "/home/tatsuhito/catkin_ws/devel/include/mimi_manipulation_pkg/ImageRange.h"
+>>>>>>> 88fc288... action, srvの変更をしたのでそれのデバッグ(testは未完) by Jetson 20/12/18
 =======
 #include "/home/nvidia/catkin_ws/devel/include/mimi_manipulation_pkg/ImageRange.h"
 //#include "/home/tatsuhito/catkin_ws/devel/include/mimi_manipulation_pkg/ImageRange.h"

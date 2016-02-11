@@ -22,7 +22,11 @@ class RecognizerAction(object):
 
     def recognizerFeedback(self,msg):
         rospy.loginfo('feedback : %s'%(msg))
+<<<<<<< HEAD
         self.recognize_feedback = ResultState.success if msg.recognize_feedback else ResultState.failure
+=======
+        self.feedback_flg = msg.recognize_feedback
+>>>>>>> 88fc288... action, srvの変更をしたのでそれのデバッグ(testは未完) by Jetson 20/12/18
         
     def recognizeObject(self,target_name):
         act = actionlib.SimpleActionClient('/manipulation/localize', ObjectRecognizerAction)

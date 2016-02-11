@@ -38,6 +38,7 @@ if __name__ == "__main__":
     rospy.wait_for_service("/recog/count")
     rospy.sleep(1.0)
     rospy.loginfo("wait2")
+<<<<<<< HEAD
 =======
     count_object = rospy.ServiceProxy("/recog/count", RecognizeCount)
     find_object = rospy.ServiceProxy("/recog/find", RecognizeFind)
@@ -50,6 +51,8 @@ if __name__ == "__main__":
 
     rospy.wait_for_service("/recog/count")
 >>>>>>> e6bb873... create testcode by Laptop 20/12/18
+=======
+>>>>>>> 88fc288... action, srvの変更をしたのでそれのデバッグ(testは未完) by Jetson 20/12/18
     res = count_object(target_name)
     rospy.loginfo("module : count\n", res.object_num, res.object_list)
     
