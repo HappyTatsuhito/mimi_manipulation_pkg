@@ -70,10 +70,14 @@ class ObjectRecognizer:
         if object_name == 'any':
             any_dict = {}
             for i in range(len(object_list)):
-                if object_list[i] in object_dict['any']:
-                    any_dict[object_list[i]] = bb[i].xmin
+                if object_list[i] in self.object_dict['any']:
+                    print object_list[i]
+                    any_dict[str(object_list[i])] = int(bb[i].xmin)
             sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
-            object_list = sorted_any_dict.keys()
+            object_list = []
+            for i in range(len(sorted_any_dict)):
+                object_list.append(sorted_any_dict[i][0])
+            print object_list
             
         return object_count, object_list
 
