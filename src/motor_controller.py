@@ -64,8 +64,8 @@ class JointController(MotorController):
         print '0:', step0, ' 1:', step1
         thread_m0 = threading.Thread(target=self.callMotorService, args=(0, step0,))
         thread_m1 = threading.Thread(target=self.callMotorService, args=(1, step1,))
-        thread_m0.start()
         thread_m1.start()
+        thread_m0.start()
         rospy.sleep(0.2)
         while (self.rotation_velocity[0] > 0 or self.rotation_velocity[1] > 0) and not rospy.is_shutdown():
             pass
@@ -164,9 +164,9 @@ class ArmPoseChanger(JointController):
         thread_elbow = threading.Thread(target=self.elbowPub, args=(elbow_param,))
         thread_wrist = threading.Thread(target=self.wristPub, args=(wrist_param,))
         thread_wrist.start()
-        rospy.sleep(0.2)
+        rospy.sleep(0.5)
         thread_elbow.start()
-        rospy.sleep(0.2)
+        rospy.sleep(0.5)
         thread_shoulder.start()
 
     def changeArmPose(self, cmd):
