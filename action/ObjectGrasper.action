@@ -1,0 +1,8 @@
+# Define the goal
+geometry_msgs/Point grasp_goal
+---
+# Define the result
+bool grasp_result
+---
+# Define a feedback message
+string grasp_feedback

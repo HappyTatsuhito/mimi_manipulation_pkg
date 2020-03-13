@@ -1,0 +1,6 @@
+{'green stick':['cup'],
+ 'chip star':['cup'],
+ 'cup noodle':['cup'],
+ 'blue cup':['cup', 'donut', 'vase'],
+ 'any':['cup', 'bottle', 'bowl', 'donut', 'vase', 'teddy bear']
+}

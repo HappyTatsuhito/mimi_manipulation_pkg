@@ -1,0 +1,8 @@
+# Define the goal
+string recog_goal
+---
+# Define the result
+geometry_msgs/Point recog_result
+---
+# Define a feedback message
+bool recog_feedback

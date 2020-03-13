@@ -1,0 +1,8 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+  <rosparam file="$(find manipulation)/config/object_dict.yaml" command="load" ns="object_dict"/> 
+  <node pkg="object_recognizer" name="object_recognizer" type="new_object_recognizer.py" />
+  <!-- <rosparam file="$(find manipulation)/config/location_list.yaml" command="load"/> -->
+  <node pkg="object_grasper" name="object_grasper" type="object_grasper.py" />
+  <node pkg="manipulation" name="manipulation_master" type="manipulation_master.py" />
+</launch>
