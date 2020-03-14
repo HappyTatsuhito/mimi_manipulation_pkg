@@ -12,9 +12,9 @@ from dynamixel_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 # --  ros srvs --
-from manipulation.srv import ManipulateSrv
+from manipulation_pkg.srv import ManipulateSrv
 # -- action msgs --
-from manipulation.msg import *
+from manipulation_pkg.msg import *
 # -- class inheritance --
 from motor_controller import ArmPoseChanger
 
@@ -161,6 +161,12 @@ class ObjectGrasper(ArmPoseChanger):
             else:
                 self.navigation_place = 'Null'
 
+    def startUp(self):
+        self.callMotorService(4, grasper.origin_angle[4])
+        self.changeArmPose('carry')
+        self.headPub(0.0)
+
+
     def actionPreempt(self):
         rospy.loginfo('Preempt callback')
         self.act.set_preempted(text = 'message for preempt')
@@ -181,6 +187,5 @@ class ObjectGrasper(ArmPoseChanger):
 if __name__ == '__main__':
     rospy.init_node('object_grasper')
     grasper = ObjectGrasper()
-    grasper.callMotorService(4, grasper.origin_angle[4])
-    grasper.changeArmPose('carry')
+    grasper.startUp()
     rospy.spin()

@@ -7,9 +7,9 @@ import actionlib
 from std_msgs.msg import String, Float64
 from geometry_msgs.msg import Twist
 # -- ros srvs --
-from manipulation.srv import ManipulateSrv
+from manipulation_pkg.srv import ManipulateSrv
 # -- action msgs --
-from manipulation.msg import *
+from manipulation_pkg.msg import *
 
 class ObjectRecognizer(object):
     def __init__(self):

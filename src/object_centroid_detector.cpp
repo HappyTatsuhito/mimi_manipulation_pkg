@@ -21,7 +21,7 @@ public:
     
     receive_range = FALSE;
   }
-  void ImageRangeCB(const object_recognizer::ImageRange input){
+  void ImageRangeCB(const manipulation_pkg::ImageRange input){
     image_range[TOP]   = input.top;
     image_range[BOTTOM]= input.bottom;
     image_range[LEFT]  = input.left;
