@@ -1,4 +1,4 @@
-#include "manipulation_pkg/centroid_detector.h"
+#include "mimi_manipulation_pkg/centroid_detector.h"
 
 class ObjectCentroidDetector{
 private:
@@ -21,7 +21,7 @@ public:
     
     receive_range = FALSE;
   }
-  void ImageRangeCB(const manipulation_pkg::ImageRange input){
+  void ImageRangeCB(const mimi_manipulation_pkg::ImageRange input){
     image_range[TOP]   = input.top;
     image_range[BOTTOM]= input.bottom;
     image_range[LEFT]  = input.left;
