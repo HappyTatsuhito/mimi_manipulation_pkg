@@ -11,7 +11,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from dynamixel_workbench_msgs.msg import DynamixelStateList
 # ros srvs
 from dynamixel_workbench_msgs.srv import DynamixelCommand
-from manipulation_pkg.srv import ManipulateSrv
+from mimi_manipulation_pkg.srv import ManipulateSrv
 
 class MotorController(object):
     def __init__(self):

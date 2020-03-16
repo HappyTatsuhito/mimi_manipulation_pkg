@@ -9,12 +9,12 @@ import rosparam
 import actionlib
 # -- ros msgs --
 from geometry_msgs.msg import Twist, Point
-from darknet_ros_msgs.msg import BoundingBoxes
-from manipulation_pkg.msg import ImageRange
+#from darknet_ros_msgs.msg import BoundingBoxes
+from mimi_manipulation_pkg.msg import ImageRange
 # -- ros srvs --
-from manipulation_pkg.srv import RecognizeCount
+from mimi_manipulation_pkg.srv import RecognizeCount
 # -- action msgs --
-from manipulation_pkg.msg import *
+from mimi_manipulation_pkg.msg import *
 
 class ObjectRecognizer:
     def __init__(self):
@@ -61,11 +61,18 @@ class ObjectRecognizer:
         if type(object_name) != str:
             object_name = object_name.target
         object_list = []
-        if bb == 'None':
-            return 0, []
         for i in range(len(bb)):
             object_list.append(bb[i].Class)
         object_count = object_list.count(object_name)
+        
+        if object_name == 'any':
+            any_dict = {}
+            for i in range(len(object_list)):
+                if object_list[i] in object_dict['any']:
+                    any_dict[object_list[i]] = bb[i].xmin
+            sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
+            object_list = sorted_any_dict.keys()
+            
         return object_count, object_list
 
     def actionPreempt(self):

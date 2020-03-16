@@ -12,9 +12,9 @@ from dynamixel_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 # --  ros srvs --
-from manipulation_pkg.srv import ManipulateSrv
+from mimi_manipulation_pkg.srv import ManipulateSrv
 # -- action msgs --
-from manipulation_pkg.msg import *
+from mimi_manipulation_pkg.msg import *
 # -- class inheritance --
 from motor_controller import ArmPoseChanger
 
