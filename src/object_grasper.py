@@ -47,9 +47,7 @@ class ObjectGrasper(ArmPoseChanger):
             return
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.0)
-        self.moveBase(0.6)
-        rospy.sleep(0.4)
-        self.moveBase(0.6)
+        self.moveBase(0.9)
         self.armController(joint_angle[0], joint_angle[1]-0.6, joint_angle[2]+0.3)
         rospy.sleep(0.2)
         self.callMotorService(4, self.origin_angle[4])
