@@ -1,6 +1,8 @@
-{'green stick':['cup'],
- 'chip star':['cup'],
- 'cup noodle':['cup'],
- 'blue cup':['cup', 'donut', 'vase'],
- 'any':['cup', 'bottle', 'bowl', 'donut', 'vase', 'teddy bear']
+{'red cup':['cup'],
+ 'blue cup':['cup'],
+ 'green snack':['cup'],
+ 'red snack':['cup'],
+ 'coke':['bottle'],
+ 'water':['bottle'],
+ 'any':['cup', 'bottle']
 }
