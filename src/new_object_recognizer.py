@@ -16,6 +16,114 @@ from mimi_manipulation_pkg.srv import RecognizeCount
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
+
+class MimiControl(object):
+    def __init__(self):
+        self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size=1)
+
+    def moveBase(self, rad_speed):
+        cmd = Twist()
+        for speed_i in range(10):
+            cmd.linear.x = rad_speed*0.05*speed_i
+            cmd.angular.z = 0
+            self.cmd_vel_pub.publish(cmd)
+            rospy.sleep(0.1)
+        for speed_i in range(10):
+            cmd.linear.x = rad_speed*0.05*(10-speed_i)
+            cmd.angular.z = 0
+            self.cmd_vel_pub.publish(cmd)
+            rospy.sleep(0.1)
+        cmd.linear.x = 0
+        cmd.angular.z = 0
+        self.cmd_vel_pub.publish(cmd)
+
+        
+class RecognizeCallBack(object):
+    def __init__(self):
+        bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
+        detector_sub = rospy.Subscriber('/object/xyz_centroid',Point,self.detectorCB)
+        self.image_range_pub = rospy.Publisher('/object/image_range',ImageRange,queue_size=1)
+
+        self.bbox = 'None'
+        self.update_time = 0 # darknetからpublishされた時刻を保存
+        self.update_flg = False # darknetからpublishされたかどうかの確認
+        self.object_centroid = Point()
+        self.centroid_flg = False
+        
+    def detectorCB(self, res):
+        self.object_centroid = res
+        self.centroid_flg = True
+        
+    def boundingBoxCB(self,bb):
+        self.update_time = time.time()
+        self.update_flg = True
+        self.bbox = bb.boundingBoxes
+
+    def initializeObject(self):
+        rate = rospy.Rate(3.0)
+        while not rospy.is_shutdown():
+            if time.time() - self.update_time > 1.5 and self.update_flg:
+                self.bbox = 'None'
+                self.update_flg = False
+                rospy.loginfo('initialize') # test
+            rate.sleep()
+
+
+class RecognizeTools(object):
+    def __init__(self):
+        recog_service_server = rospy.Service('/object/recognize',RecognizeCount,self.countObject)
+
+    def searchObject(self, object_name='None'):
+        pass
+
+    def countObject(self, object_name='None', bb=None):
+        if bb is None:
+            bb = self.bbox
+        if type(object_name) != str:
+            object_name = object_name.target
+        object_list = []
+        for i in range(len(bb)):
+            object_list.append(bb[i].Class)
+        object_count = object_list.count(object_name)
+        
+        if object_name == 'any':
+            any_dict = {}
+            for i in range(len(object_list)):
+                if object_list[i] in object_dict['any']:
+                    any_dict[object_list[i]] = bb[i].xmin
+            sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
+            object_list = sorted_any_dict.keys()
+            
+        return object_count, object_list
+
+    def localizeObject(self, object_name='None', bb=None):
+        pass
+    
+
+class RecognizeAction(object):
+    def __init__(self):
+        self.act = actionlib.SimpleActionServer('/manipulation/localize',
+                                                ObjectRecognizerAction,
+                                                execute_cb = self.localizeObject,
+                                                auto_start = False)
+        self.act.register_preempt_callback(self.actionPreempt)
+
+    def actionPreempt(self):
+        rospy.loginfo('preempt callback')
+        self.act.set_preempted(text = 'message for preempt')
+        self.preempt_flg = True
+
+    def actionMain(self):
+        pass
+
+if __name__ == '__main__':
+    rospy.init_node('object_recognizer')
+    obj_recog = ObjectRecognizer()
+    obj_recog.initializeObject()
+    rospy.spin()
+
+
+
 class ObjectRecognizer:
     def __init__(self):
         # -- topic subscriber --
@@ -58,8 +166,6 @@ class ObjectRecognizer:
     def countObject(self, object_name='None', bb = None):
         if bb is None:
             bb = self.bbox
-        if bb == 'None':
-            return 0, []
         if type(object_name) != str:
             object_name = object_name.target
         object_list = []

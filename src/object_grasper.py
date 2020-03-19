@@ -22,7 +22,7 @@ class ObjectGrasper(ArmPoseChanger):
     def __init__(self):
         super(ObjectGrasper,self).__init__()
         # -- topic subscriber --
-        navigation_place_sub = rospy.Subscriber('/navigation/move_place',String,self.navigationPlaceCB)
+        navigation_place_sub = rospy.Subscriber('/current_location',String,self.navigationPlaceCB)
         # -- topic publisher --
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size = 1)
         # -- action server --
@@ -59,34 +59,6 @@ class ObjectGrasper(ArmPoseChanger):
         self.navigation_place = 'Null'
         rospy.loginfo('Finish place command\n')
         return True
-        '''
-        self. wristPub(joint_angle[2])
-        while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
-            pass
-        rospy.sleep(0.1)
-        m3_angle = self.stepToRad(self.current_pose[3])
-        m3_diff = self.stepToRad(self.torque_error[3])
-        shoulder_param = -1*(joint_angle[1]/2.1+m3_angle)*2.1-(m3_diff+0.01)*32
-        # -(m3_diff+0.025)*32：重さ補正
-        rospy.sleep(0.2)
-        print 'current : ', self.current_pose[3], 'error : ', self.torque_error[3]
-        print 'm3_angle : ', m3_angle, 'm3_diff : ', m3_diff, 'shoulder : ',self.radToStep(shoulder_param)
-        self.shoulderPub(shoulder_param)
-        self.elbowPub(joint_angle[1])
-        self.moveBase(0.6)
-        rospy.sleep(0.4)
-        self.armController(shoulder_param, joint_angle[1]-0.6, m3_angle+0.3)
-        rospy.sleep(0.2)
-        self.callMotorService(4, self.origin_angle[4])
-        rospy.sleep(0.5)
-        self.moveBase(-0.3)
-        self.shoulderPub(shoulder_param+0.1)
-        self.moveBase(-0.9)
-        self.changeArmPose('carry')
-        self.navigation_place = 'Null'
-        rospy.loginfo('Finish place command\n')
-        return True
-        '''
                         
     def moveBase(self,rad_speed):
         cmd = Twist()
