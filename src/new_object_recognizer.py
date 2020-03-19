@@ -40,13 +40,9 @@ class MimiControl(object):
         
 class RecognizeCallBack(object):
     def __init__(self):
-        bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
         detector_sub = rospy.Subscriber('/object/xyz_centroid',Point,self.detectorCB)
         self.image_range_pub = rospy.Publisher('/object/image_range',ImageRange,queue_size=1)
 
-        self.bbox = 'None'
-        self.update_time = 0 # darknetからpublishされた時刻を保存
-        self.update_flg = False # darknetからpublishされたかどうかの確認
         self.object_centroid = Point()
         self.centroid_flg = False
         
@@ -54,12 +50,23 @@ class RecognizeCallBack(object):
         self.object_centroid = res
         self.centroid_flg = True
         
+
+class RecognizeTools(object):
+    def __init__(self):
+        bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
+        recog_service_server = rospy.Service('/object/recognize',RecognizeCount,self.countObject)
+
+        self.object_dict = rosparam.get_param('/object_dict')
+        self.bbox = 'None'
+        self.update_time = 0 # darknetからpublishされた時刻を保存
+        self.update_flg = False # darknetからpublishされたかどうかの確認
+
     def boundingBoxCB(self,bb):
         self.update_time = time.time()
         self.update_flg = True
         self.bbox = bb.boundingBoxes
 
-    def initializeObject(self):
+    def initializeBBox(self):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
             if time.time() - self.update_time > 1.5 and self.update_flg:
@@ -68,13 +75,8 @@ class RecognizeCallBack(object):
                 rospy.loginfo('initialize') # test
             rate.sleep()
 
-
-class RecognizeTools(object):
-    def __init__(self):
-        recog_service_server = rospy.Service('/object/recognize',RecognizeCount,self.countObject)
-
     def searchObject(self, object_name='None'):
-        pass
+        mimi_control = MimiControl()
 
     def countObject(self, object_name='None', bb=None):
         if bb is None:
@@ -108,6 +110,11 @@ class RecognizeAction(object):
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
 
+        self.search_count = 0
+        self.move_count = 0
+
+        self.act.start()
+
     def actionPreempt(self):
         rospy.loginfo('preempt callback')
         self.act.set_preempted(text = 'message for preempt')
@@ -119,7 +126,7 @@ class RecognizeAction(object):
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
     obj_recog = ObjectRecognizer()
-    obj_recog.initializeObject()
+    obj_recog.initializeBBox()
     rospy.spin()
 
 
