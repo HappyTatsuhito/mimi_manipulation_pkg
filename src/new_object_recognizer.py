@@ -75,12 +75,19 @@ class RecognizeTools(object):
                 rospy.loginfo('initialize') # test
             rate.sleep()
 
-    def searchObject(self, object_name='None'):
+    def searchObject(self, object_name='None', bb=None):
         mimi_control = MimiControl()
+        if bb is None:
+            bb = self.bbox
+        if type(object_name) != str:
+            object_name = object_name.target
+        
 
     def countObject(self, object_name='None', bb=None):
         if bb is None:
             bb = self.bbox
+        if bb == 'None':
+            return 0, []
         if type(object_name) != str:
             object_name = object_name.target
         object_list = []
@@ -106,7 +113,7 @@ class RecognizeAction(object):
     def __init__(self):
         self.act = actionlib.SimpleActionServer('/manipulation/localize',
                                                 ObjectRecognizerAction,
-                                                execute_cb = self.localizeObject,
+                                                execute_cb = self.actionMain,
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
 
