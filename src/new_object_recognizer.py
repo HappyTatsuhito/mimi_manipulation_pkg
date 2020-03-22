@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
-import rospy
 import sys
 import time
 import math
+import rospy
 import rosparam
 import actionlib
 # -- ros msgs --
@@ -37,8 +37,13 @@ class MimiControl(object):
         cmd.angular.z = 0
         self.cmd_vel_pub.publish(cmd)
 
+    ###
+    # mimi_common_pkgから指定角度回転するモジュールを持ってくる
+    # searchObjectやlocalizeObjectで使用する
+    ###
+
         
-class RecognizeCallBack(object):
+class CallDetector(object):
     def __init__(self):
         detector_sub = rospy.Subscriber('/object/xyz_centroid',Point,self.detectorCB)
         self.image_range_pub = rospy.Publisher('/object/image_range',ImageRange,queue_size=1)
@@ -57,7 +62,7 @@ class RecognizeTools(object):
         recog_service_server = rospy.Service('/object/recognize',RecognizeCount,self.countObject)
 
         self.object_dict = rosparam.get_param('/object_dict')
-        self.bbox = 'None'
+        self.bbox = []
         self.update_time = 0 # darknetからpublishされた時刻を保存
         self.update_flg = False # darknetからpublishされたかどうかの確認
 
@@ -70,31 +75,36 @@ class RecognizeTools(object):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
             if time.time() - self.update_time > 1.5 and self.update_flg:
-                self.bbox = 'None'
+                self.bbox = []
                 self.update_flg = False
                 rospy.loginfo('initialize') # test
             rate.sleep()
 
-    def searchObject(self, object_name='None', bb=None):
+    def searchObject(self, object_name='None'):
         mimi_control = MimiControl()
-        if bb is None:
-            bb = self.bbox
         if type(object_name) != str:
             object_name = object_name.target
-        
-
+        search_flg = False
+        search_count = 0
+        while not search_flg and search_count < 10 and not rospy.is_shutdowm():
+            #rotate
+            if object_name == 'None':
+                search_flg = bool(len(self.bbox))
+            elif object_name == 'any':
+                search_flg = bool(len(list(set(self.object_dict['any']) & set(self.bbox))))
+            else:
+                search_flg = object_name in self.bbox
+        return search_flg
+            
     def countObject(self, object_name='None', bb=None):
         if bb is None:
             bb = self.bbox
-        if bb == 'None':
-            return 0, []
         if type(object_name) != str:
             object_name = object_name.target
         object_list = []
         for i in range(len(bb)):
             object_list.append(bb[i].Class)
         object_count = object_list.count(object_name)
-        
         if object_name == 'any':
             any_dict = {}
             for i in range(len(object_list)):
@@ -102,13 +112,12 @@ class RecognizeTools(object):
                     any_dict[object_list[i]] = bb[i].xmin
             sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
             object_list = sorted_any_dict.keys()
-            
         return object_count, object_list
 
     def localizeObject(self, object_name='None', bb=None):
-        pass
-    
+        call_detector = CallDetector()
 
+        
 class RecognizeAction(object):
     def __init__(self):
         self.act = actionlib.SimpleActionServer('/manipulation/localize',
@@ -127,8 +136,16 @@ class RecognizeAction(object):
         self.act.set_preempted(text = 'message for preempt')
         self.preempt_flg = True
 
-    def actionMain(self):
-        pass
+    def actionMain(self, goal):
+        rospy.loginfo('start action %s'%(goal.recog_goal))
+        target_name = goal.recog_goal
+        localize_feedback = ObjectRecognizerFeedback()
+        localize_result = ObjectRecognizerResult()
+        recognize_tools = RecognizeTools()
+        loop_flg = True
+        while loop_flg and not rospy.is_shutdown():
+            bb = recognize_tools.bbox
+            
 
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
