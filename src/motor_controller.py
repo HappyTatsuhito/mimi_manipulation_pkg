@@ -120,7 +120,7 @@ class JointController(MotorController):
                 grasp_flg = False
                 break;
         rospy.sleep(0.1)
-        self.callMotorService(4, self.current_pose[4]-70)
+        self.callMotorService(4, self.current_pose[4]-150)
         print 'fin'
         return grasp_flg
 
