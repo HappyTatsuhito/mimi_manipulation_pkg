@@ -142,9 +142,25 @@ class RecognizeAction(object):
         localize_feedback = ObjectRecognizerFeedback()
         localize_result = ObjectRecognizerResult()
         recognize_tools = RecognizeTools()
+        target_dict = recognize_tools.object_dict
         loop_flg = True
         while loop_flg and not rospy.is_shutdown():
             bb = recognize_tools.bbox
+            if target_name in target_dict.keys():
+                for i in range(len(target_dict[target_name])):
+                    rospy.loginfo(target_dict[target_name][i])
+                    object_count, object_list = recognize_tools.countObject(target_dict[target_name][i], bb)
+                    if bool(object_count):
+                        target_name = target_dict[target_name][i]
+                        break
+            else:
+                object_count, object_list = recognize_tools.countObject(target_name, bb)
+#            rospy.sleep(1.0)
+            rospy.loginfo('-- recognize result --')
+            rospy.loginfo(object_count)
+            rospy.loginfo(object_list)
+            rospy.loginfo('----------------------')
+            range_flg = False
             
 
 if __name__ == '__main__':
