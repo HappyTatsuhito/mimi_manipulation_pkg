@@ -16,10 +16,13 @@ from mimi_manipulation_pkg.srv import RecognizeCount
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
+sys.path.insert(0, '/home/nvidia/catkin_ws/src/mimi_common_pkg/scripts')
+from common_function import BaseCarrier
 
-class MimiControl(object):
+
+class MimiControl(BaseCarrier):
     def __init__(self):
-        self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size=1)
+        super(MimiControl,self).__init__()
 
     def moveBase(self, rad_speed):
         cmd = Twist()
@@ -36,11 +39,6 @@ class MimiControl(object):
         cmd.linear.x = 0
         cmd.angular.z = 0
         self.cmd_vel_pub.publish(cmd)
-
-    ###
-    # mimi_common_pkgから指定角度回転するモジュールを持ってくる
-    # searchObjectやlocalizeObjectで使用する
-    ###
 
         
 class CallDetector(object):
