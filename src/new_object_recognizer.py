@@ -12,7 +12,7 @@ from geometry_msgs.msg import Twist, Point
 from darknet_ros_msgs.msg import BoundingBoxes
 from mimi_manipulation_pkg.msg import ImageRange
 # -- ros srvs --
-from mimi_manipulation_pkg.srv import RecognizeCount
+from mimi_manipulation_pkg.srv import RecognizeFind, RecognizeCount, RecognizeLocalize
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
@@ -64,7 +64,7 @@ class CallDetector(object):
 class RecognizeTools(object):
     def __init__(self):
         bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
-        recog_search_srv = rospy.Service('/recog/search',RecognizeSearch,self.searchObject)
+        recog_find_srv = rospy.Service('/recog/find',RecognizeFind,self.findObject)
         recog_count_srv = rospy.Service('/recog/count',RecognizeCount,self.countObject)
         recog_localize_srv = rospy.Service('/recog/localize',RecognizeLocalize,self.localizeObject)
 
@@ -87,25 +87,25 @@ class RecognizeTools(object):
                 rospy.loginfo('initialize') # test
             rate.sleep()
 
-    def searchObject(self, object_name='None'):
+    def findObject(self, object_name='None'):
         mimi_control = MimiControl()
         if type(object_name) != str:
             object_name = object_name.target
-        search_flg = False
-        search_count = 0
-        while not search_flg and search_count < 10 and not rospy.is_shutdowm():
+        find_flg = False
+        find_count = 0
+        while not find_flg and find_count < 10 and not rospy.is_shutdowm():
             #rotate
-            search_count += 1
-            rotation_angle = 45 - (((search_count)%4)/2) * 90
+            find_count += 1
+            rotation_angle = 45 - (((find_count)%4)/2) * 90
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(2.0)
             if object_name == 'None':
-                search_flg = bool(len(self.bbox))
+                find_flg = bool(len(self.bbox))
             elif object_name == 'any':
-                search_flg = bool(len(list(set(self.object_dict['any'])&set(self.bbox))))
+                find_flg = bool(len(list(set(self.object_dict['any'])&set(self.bbox))))
             else:
-                search_flg = object_name in self.bbox
-        return search_flg
+                find_flg = object_name in self.bbox
+        return find_flg
             
     def countObject(self, object_name='None', bb=None):
         if bb is None:
@@ -151,7 +151,7 @@ class RecognizeAction(object):
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
 
-        self.search_count = 0
+        self.find_count = 0
         self.move_count = 0
 
         self.act.start()
@@ -210,7 +210,7 @@ class RecognizeAction(object):
                     #前後進
                     pass
             else:
-                search_flg = recognize_tools.searchObject()
+                find_flg = recognize_tools.findObject()
             if loop_flg:
                 action_feedback.recog_feedback = range_flg
                 self.act.publish_feedback(action_feedback)
