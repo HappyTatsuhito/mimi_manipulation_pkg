@@ -33,7 +33,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.act.register_preempt_callback(self.actionPreempt)
         # -- instance variables --
         self.navigation_place = 'Null'
-        self.target_place = {'Null':0.75, 'Eins':0.725, 'Zwei':0.67, 'Drei':0.690, 'vier':0.480}
+        self.target_place = {'Null':0.75, 'Eins':0.725, 'Zwei':0.70, 'Drei':0.690, 'vier':0.480}
 
         self.act.start()
 
@@ -47,7 +47,9 @@ class ObjectGrasper(ArmPoseChanger):
             return
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.0)
-        self.moveBase(0.9)
+        self.moveBase(0.8)
+        rospy.sleep(2.0)
+        self.moveBase(0.4)
         self.armController(joint_angle[0], joint_angle[1]-0.6, joint_angle[2]+0.3)
         rospy.sleep(0.2)
         self.callMotorService(4, self.origin_angle[4])
@@ -94,7 +96,7 @@ class ObjectGrasper(ArmPoseChanger):
         else:
             y = self.target_place[self.navigation_place] + 0.12
         #x = (y-0.75)/10+0.5
-        x = 0.45
+        x = 0.475
         joint_angle = self.inverseKinematics(x, y)
         if not joint_angle:
             return False

@@ -9,14 +9,14 @@ import rosparam
 import actionlib
 # -- ros msgs --
 from geometry_msgs.msg import Twist, Point
-from darknet_ros_msgs.msg import BoundingBoxes
+#from darknet_ros_msgs.msg import BoundingBoxes
 from mimi_manipulation_pkg.msg import ImageRange
 # -- ros srvs --
 from mimi_manipulation_pkg.srv import RecognizeCount
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
-sys.path.insert(0, '/home/nvidia/catkin_ws/src/mimi_common_pkg/scripts')
+sys.path.insert(0, '/home/demlab/catkin_ws/src/mimi_common_pkg/scripts')
 from common_function import BaseCarrier
 
 
@@ -57,11 +57,13 @@ class CallDetector(object):
 class RecognizeTools(object):
     def __init__(self):
         bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
-        recog_service_server = rospy.Service('/object/recognize',RecognizeCount,self.countObject)
+        recog_search_srv = rospy.Service('/recog/search',RecognizeSearch,self.searchObject)
+        recog_count_srv = rospy.Service('/recog/count',RecognizeCount,self.countObject)
+        recog_localize_srv = rospy.Service('/recog/localize',RecognizeLocalize,self.localizeObject)
 
         self.object_dict = rosparam.get_param('/object_dict')
         self.bbox = []
-        self.update_time = 0 # darknetからpublishされた時刻を保存
+        self.update_time = 0 # darknetからpublishされた時刻を記録
         self.update_flg = False # darknetからpublishされたかどうかの確認
 
     def boundingBoxCB(self,bb):
@@ -86,10 +88,14 @@ class RecognizeTools(object):
         search_count = 0
         while not search_flg and search_count < 10 and not rospy.is_shutdowm():
             #rotate
+            search_count += 1
+            rotation_angle = 45 - (((search_count)%4)/2) * 90
+            mimi_control.angleRotation(rotation_angle)
+            rospy.sleep(2.0)
             if object_name == 'None':
                 search_flg = bool(len(self.bbox))
             elif object_name == 'any':
-                search_flg = bool(len(list(set(self.object_dict['any']) & set(self.bbox))))
+                search_flg = bool(len(list(set(self.object_dict['any'])&set(self.bbox))))
             else:
                 search_flg = object_name in self.bbox
         return search_flg
@@ -112,9 +118,23 @@ class RecognizeTools(object):
             object_list = sorted_any_dict.keys()
         return object_count, object_list
 
-    def localizeObject(self, object_name='None', bb=None):
-        call_detector = CallDetector()
-
+    def localizeObject(self, object_name, bb=None):
+        Detector = CallDetector()
+        if bb is None:
+            bb = self.bbox
+        image_range = ImageRange()
+        image_range.top = bb[object_name].ymin
+        image_range.bottom = bb[object_name].ymax
+        image_range.left = bb[object_name].xmin
+        image_range.right = bb[object_name].xmax
+        rospy.sleep(0.2)
+        Detector.image_range_pub.publish(image_range)
+        while Detector.centroid_flg == False and not rospy.is_shutdown():
+            pass
+        object_centroid = Detector.object_centroid
+        Detector.centroid_flg = False
+        return object_centroid
+        
         
 class RecognizeAction(object):
     def __init__(self):
@@ -135,12 +155,13 @@ class RecognizeAction(object):
         self.preempt_flg = True
 
     def actionMain(self, goal):
-        rospy.loginfo('start action %s'%(goal.recog_goal))
         target_name = goal.recog_goal
-        localize_feedback = ObjectRecognizerFeedback()
-        localize_result = ObjectRecognizerResult()
-        recognize_tools = RecognizeTools()
+        rospy.loginfo('start action >> recognize %s'%(target_name))
+        action_feedback = ObjectRecognizerFeedback()
+        action_result = ObjectRecognizerResult()
         target_dict = recognize_tools.object_dict
+        recognize_tools = RecognizeTools()
+        mimi_control = MimiControl()
         loop_flg = True
         while loop_flg and not rospy.is_shutdown():
             bb = recognize_tools.bbox
@@ -159,198 +180,45 @@ class RecognizeAction(object):
             rospy.loginfo(object_list)
             rospy.loginfo('----------------------')
             range_flg = False
-            
-
-if __name__ == '__main__':
-    rospy.init_node('object_recognizer')
-    obj_recog = ObjectRecognizer()
-    obj_recog.initializeBBox()
-    rospy.spin()
-
-
-
-class ObjectRecognizer:
-    def __init__(self):
-        # -- topic subscriber --
-        bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
-        detector_sub = rospy.Subscriber('/object/xyz_centroid',Point,self.detectorCB)
-        # -- topic publisher --
-        #service化,モジュール化したい
-        self.image_range_pub = rospy.Publisher('/object/image_range',ImageRange,queue_size=1)
-        self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size=1)
-        # -- service server --
-        recog_service_server = rospy.Service('/object/recognize',RecognizeCount,self.countObject)
-        # -- action server --
-        self.act = actionlib.SimpleActionServer('/manipulation/localize',
-                                                ObjectRecognizerAction,
-                                                execute_cb = self.localizeObject,
-                                                auto_start = False)
-        self.act.register_preempt_callback(self.actionPreempt)
-        # -- instance variables --
-        self.object_dict = rosparam.get_param('/object_dict')
-        self.bbox = 'None'
-        self.update_time = 0 # darknetからpublishされた時刻を保存
-        self.update_flg = False # darknetからpublishされたかどうかの確認
-        self.object_centroid = Point()
-        self.centroid_flg = False
-        self.preempt_flg = False
-        self.search_count = 0
-        self.move_count = 0
-
-        self.act.start()
-
-    def boundingBoxCB(self,bb):
-        self.update_time = time.time()
-        self.update_flg = True
-        self.bbox = bb.boundingBoxes
-
-    def detectorCB(self, res):
-        self.object_centroid = res
-        self.centroid_flg = True
-
-    def countObject(self, object_name='None', bb = None):
-        if bb is None:
-            bb = self.bbox
-        if type(object_name) != str:
-            object_name = object_name.target
-        object_list = []
-        for i in range(len(bb)):
-            object_list.append(bb[i].Class)
-        object_count = object_list.count(object_name)
-        
-        if object_name == 'any':
-            any_dict = {}
-            for i in range(len(object_list)):
-                if object_list[i] in object_dict['any']:
-                    any_dict[object_list[i]] = bb[i].xmin
-            sorted_any_dict = sorted(any_dict.items(), key=lambda x:x[1])
-            object_list = sorted_any_dict.keys()
-            
-        return object_count, object_list
-
-    def actionPreempt(self):
-        rospy.loginfo('preempt callback')
-        self.act.set_preempted(text = 'message for preempt')
-        self.preempt_flg = True
-        
-    def localizeObject(self, goal):
-        rospy.loginfo('start action %s'%(goal.recog_goal))
-        target_name = goal.recog_goal
-        localize_feedback = ObjectRecognizerFeedback()
-        localize_result = ObjectRecognizerResult()
-        loop_flg = True
-        cmd = Twist()
-        cmd.linear.x = 0
-        cmd.angular.z = 0
-        while loop_flg and not rospy.is_shutdown():
-            bb = self.bbox
-            if target_name in self.object_dict.keys():
-                for i in range(len(self.object_dict[target_name])):
-                    rospy.loginfo(self.object_dict[target_name][i])
-                    object_count, object_list = self.countObject(self.object_dict[target_name][i], bb)
-                    if bool(object_count):
-                        target_name = self.object_dict[target_name][i]
-                        break
-            else:
-                object_count, object_list = self.countObject(target_name, bb)
-#            rospy.sleep(1.0)
-            rospy.loginfo('-- recognize result --')
-            rospy.loginfo(object_count)
-            rospy.loginfo(object_list)
-            rospy.loginfo('----------------------')
-            range_flg = False
-            # ここらへんをもう少し綺麗に書きたい
-            if target_name == 'None' and not bool(object_count):# 適当に見えたものを掴むための処理（ここいらんかも）
-                list_num = 0
-                range_flg = True
-            elif bool(object_count):# 指定のものを掴むための処理
-                list_num = object_list.index(target_name)
-                range_flg = True
+            ###
+            #if bool(object_count):
+            #    list_num = object_list.index(target_name)
+            #    range_flg = True
+            range_flg = bool(object_count)
+            ###
             if range_flg:
-                object_image_range = ImageRange()
-                object_image_range.top = bb[list_num].ymin
-                object_image_range.bottom = bb[list_num].ymax
-                object_image_range.left = bb[list_num].xmin
-                object_image_range.right = bb[list_num].xmax
-                rospy.sleep(0.2)
-                self.image_range_pub.publish(object_image_range)
-                while self.centroid_flg == False and not rospy.is_shutdown():
-                    pass
-                object_coordinate = self.object_centroid
-                self.centroid_flg = False
-                #print object_coordinate
-                if not math.isnan(object_coordinate.x):# 物体が正面になるように回転する処理
-                    object_coordinate.y += 0.08 # calibrate RealSenseCamera d435
-                    object_angle = math.atan2(object_coordinate.y, object_coordinate.x)
-                    if abs(object_angle) > 0.07:
-                        rospy.loginfo('There is not object in front.')
-                        cmd.angular.z = object_angle * 3.5 #要調整
-                        if abs(cmd.angular.z) < 0.7:
-                            cmd.angular.z = int(cmd.angular.z/abs(cmd.angular.z))*0.7
-                        rospy.loginfo('cmd.angura.z : %s'%(object_angle))
-                        self.cmd_vel_pub.publish(cmd)
-                        cmd.angular.z = 0
-                        rospy.sleep(4.0)
+                object_centroid = recognize_tools.localizeObject(target_name)
+                if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
+                    object_centroid.y += 0.08 # calibrate RealSenseCamera d435
+                    object_angle = math.atan2(object_centroide.y, object_centroid.x)/math.pi*180
+                    if abs(object_angle) > 4.5:
                         # retry
+                        rospy.loginfo('There is not object in front.')
+                        mimi_control.angleRotation(object_angle)
+                        rospy.sleep(4.0)
                     else:
                         # success
                         loop_flg = False
                 else:
                     #前後進
-                    self.move_count += 1
-                    range_flg = False
-                    move_range = -0.4*(((self.move_count)%4)/2)+0.2
-                    self.moveBase(move_range)
-                    rospy.sleep(3.0)
+                    pass
             else:
-                #回転
-                self.search_count += 1
-                cmd.angular.z = -2.0*(((self.search_count)%4)/2)+1.0
-                self.cmd_vel_pub.publish(cmd)
-                cmd.angular.z = 0
-                rospy.sleep(4.0)
+                search_flg = recognize_tools.searchObject()
             if loop_flg:
-                localize_feedback.recog_feedback = range_flg
-                self.act.publish_feedback(localize_feedback)
+                action_feedback.recog_feedback = range_flg
+                self.act.publish_feedback(action_feedback)
             range_flg = False
             if self.preempt_flg:
                 self.preempt_flg = False
                 break
         else:
-            self.search_count = 0
-            self.move_count = 0
             rospy.loginfo('Succeeded')
-            localize_result.recog_result = self.object_centroid
-            self.act.set_succeeded(localize_result)
-
-    def moveBase(self,rad_speed):
-        cmd = Twist()
-        for speed_i in range(10):
-            cmd.linear.x = rad_speed*0.05*speed_i
-            cmd.angular.z = 0
-            self.cmd_vel_pub.publish(cmd)
-            rospy.sleep(0.1)
-        for speed_i in range(10):
-            cmd.linear.x = rad_speed*0.05*(10-speed_i)
-            cmd.angular.z = 0
-            self.cmd_vel_pub.publish(cmd)
-            rospy.sleep(0.1)
-        cmd.linear.x = 0
-        cmd.angular.z = 0
-        self.cmd_vel_pub.publish(cmd)
-
-    def initializeObject(self):
-        rate = rospy.Rate(3.0)
-        while not rospy.is_shutdown():
-            if time.time() - self.update_time > 1.5 and self.update_flg:
-                self.bbox = 'None'
-                self.update_flg = False
-                rospy.loginfo('initialize') # test
-            rate.sleep()
-            
-            
+            action_result.recog_result = object_centroid
+            self.act.set_succeeded(action_result)
+                
+                
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
     obj_recog = ObjectRecognizer()
-    obj_recog.initializeObject()
+    obj_recog.initializeBBox()
     rospy.spin()

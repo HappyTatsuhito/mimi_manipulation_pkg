@@ -22,7 +22,7 @@ class MotorController(object):
         # ROS Service Client
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
-        self.origin_angle = [1752, 2400, 1830, 2048, 3500, 1800]
+        self.origin_angle = [1630, 2500, 1800, 2048, 3500, 1800]
         self.current_pose = [0]*5
         self.torque_error = [0]*5
         self.rotation_velocity = [0]*5
@@ -120,7 +120,7 @@ class JointController(MotorController):
                 grasp_flg = False
                 break;
         rospy.sleep(0.1)
-        self.callMotorService(4, self.current_pose[4]-70)
+        self.callMotorService(4, self.current_pose[4]-150)
         print 'fin'
         return grasp_flg
 
@@ -197,7 +197,7 @@ class ArmPoseChanger(JointController):
         
     def carryMode(self):
         shoulder_param = -3.0
-        elbow_param = 2.8
+        elbow_param = 2.5
         wrist_param = 1.5
         self.armController(shoulder_param, elbow_param, wrist_param)
 
