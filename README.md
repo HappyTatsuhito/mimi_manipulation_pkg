@@ -12,7 +12,7 @@ Actionを通してobject_recognizerで物体認識、object_grasperで物体把�
 マスターからはサービスで立ち上げます  
   |Name|Type|Args|  
   |:---:|:---:|:---:|  
-  |**/manipulation**|**manipulation/ManipulateSrv**|**target(String)**|  
+  |/manipulation|**manipulation/ManipulateSrv**|**target(String)**|  
 
 使用している型は独自srvなのでimportしてください  
 MiniPC(NUC):  
