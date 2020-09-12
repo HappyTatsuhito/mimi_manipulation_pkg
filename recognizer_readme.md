@@ -18,11 +18,8 @@ Actionを通してmanipulation_masterと通信して
 ### Find Ojbect  
 物体を見つけるモジュール  
 入力されたデータに合わせて物体を探す。一定時間内に見つからなければFalseを返す。  
-||Type|Name|  
-|:---:|:---:|:---:|  
-|入力|String|target|  
-|出力|Bool|result|  
-
+**入力：String型のtarget　出力：Bool型のresult**  
+  
 機能紹介  
 - 入力：`'物体の名前'`　の場合はその物体を探す  
 - 入力：`'any'`　の場合は既知の把持可能物体を探す  
@@ -30,8 +27,14 @@ Actionを通してmanipulation_masterと通信して
   
 ### Count Ojbect  
 物体を数えるモジュール  
-入力：String　出力：Int, String[]   
+入力されたデータに合わせて個数を数える。個数と認識した物体のリストを返す。  
   
+**入力：String型のtarget　出力：Int64型のnum, String[]型のdata**   
+  
+機能紹介  
+- 入力：`物体の名前`　の場合はその物体の数と認識した物体のリストを返す  
+- 入力：`any`　の場合は`num=0`と既知の把持可能物体を左から順に並べたリストを返す
+
 ### Localize Ojbect  
 
-入力：String　出力：geometry_msgs/Point
+**入力：String型のtarget　出力：geometry_msgs/Point型のdata**
