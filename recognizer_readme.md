@@ -2,7 +2,7 @@
 物体認識を行うノードobject_recognizerについて  
 Actionを通して  
   
-#Start Up  
+# Start Up  
 立ち上げはmanipulation_masterの立ち上げと同時に立ち上がります。  
   
     $ roslaunch manipulation manipulation.launch  
