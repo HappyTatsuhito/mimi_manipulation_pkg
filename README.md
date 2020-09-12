@@ -10,10 +10,9 @@ Actionを通してobject_recognizerで物体認識、object_grasperで物体把�
     $ roslaunch manipulation manipulation.launch  
 
 マスターからはサービスで立ち上げます  
-  |Name|/manipulation|  
-  |:---:|:---:|  
-  |**Type**|**manipulation/ManipulateSrv**|  
-  |**Args**|**target(String)**|  
+  |Name|Type|Args|  
+  |:---:|:---:|:---:|  
+  |**/manipulation**|**manipulation/ManipulateSrv**|**target(String)**|  
 
 使用している型は独自srvなのでimportしてください  
 MiniPC(NUC):  
