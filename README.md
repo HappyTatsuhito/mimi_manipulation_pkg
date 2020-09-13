@@ -18,4 +18,4 @@
 ### [Recognizerの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/recognizer_readme.md)  
 > 物体認識を補助するモジュールの使い方  
 ### Grasperの使い方  
-> アームの制御を行うモジュールの使い方
+> アームの制御を行うモジュールの使い方  
