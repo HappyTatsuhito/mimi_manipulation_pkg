@@ -7,6 +7,11 @@
   
 ![物体認識・把持](https://user-images.githubusercontent.com/33217285/76415666-ee49f280-63dc-11ea-93c2-8c845aeedfe9.png)  
   
+# Start Up  
+上の主な３つの機能に必要なノードはこのコマンドで全て起動します。(RealSenseやdarknetについては省きます)  
+
+    $ roslaunch manipulation manipulation.launch  
+  
 # Index  
 ### [Manipulation Masterの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/manipulation_master_readme.md)  
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
