@@ -1,34 +1,10 @@
 # Overview  
-物体認識・把持を管理するマスター  
-Actionを通してobject_recognizerで物体認識、object_grasperで物体把持を行う  
+物体認識・把持、アーム制御などを行うパッケージ  
+  
 
 ![物体認識・把持](https://user-images.githubusercontent.com/33217285/76415666-ee49f280-63dc-11ea-93c2-8c845aeedfe9.png)
-
-# Usage  
-物体把持に必要なノードを立ち上げます(RealSenseやdarknetについては省きます)  
-
-    $ roslaunch manipulation manipulation.launch  
-
-マスターからはサービスで立ち上げます  
-  |Name|Type|Args|  
-  |:---:|:---:|:---:|  
-  |/manipulation|manipulation/ManipulateSrv|target(String)|  
-
-使用している型は独自srvなのでimportしてください  
-MiniPC(NUC):  
-    **`from mimi_common_pkg.srv import ManipulateSrv`**  
-Jetson:  
-    **`from mimi_manipulation_pkg import ManipulateSrv`**  
-
-例としてこんな感じ  
-    **`rospy.ServiceProxy('/manipulation', ManipulateSrv)`**  
-
-# Input and Output  
-把持したい物体の名前(darknetに表示される名称)をString型で引数として呼び出して下さい  
-物体の名前を`'any'`とした場合は把持可能な物体を適当に把持します  
-
-把持に成功で`True`, 失敗で`False`を返します  
-
-# Other  
-object_recognizerのリンクは[こちら](https://github.com/HappyTatsuhito/object_recognizer)  
-object_grasperのリンクは[こちら](https://github.com/HappyTatsuhito/object_grasper)
+  
+# Index  
+### [Manipulation Masterの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/manipulation_master_readme.md)  
+### [認識関係の使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/recognizer_readme.md)  
+### アーム関係の使い方  
