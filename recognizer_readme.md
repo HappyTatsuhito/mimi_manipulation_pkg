@@ -9,16 +9,15 @@ Actionを通してmanipulation_masterと通信して
   
 # Usage  
 モジュールの使い方について
-  |Module|Communication|Name|Type|  
-  |:---:|:---:|:---:|:---:|  
-  |Find Object|Service|/recog/find|RecognizeFind|  
-  |Count Object|Service|/recog/count|RecognizeCount|  
-  |Localize Object|Service|/recog/localize|RecognizeLocalize|  
+  |Module|Communication|Name|Type|Input|Output|  
+  |:---:|:---:|:---:|:---:|:---:|:---:|  
+  |Find Object|Service|/recog/find|RecognizeFind|String型の`target`|Bool型の`result`|  
+  |Count Object|Service|/recog/count|RecognizeCount|String型の`target`|Int64型の`num`, String[]型の`data`|  
+  |Localize Object|Service|/recog/localize|RecognizeLocalize|String型の`target`|geometry_msgs/Point型の`data`|  
   
 ### Find Ojbect  
 物体を見つけるモジュール  
 入力されたデータに合わせて物体を探す。一定時間内に見つからなければFalseを返す。  
-**入力：String型のtarget　出力：Bool型のresult**  
   
 機能紹介  
 - 入力：`"物体の名前"`　の場合はその物体を探す  
@@ -29,8 +28,6 @@ Actionを通してmanipulation_masterと通信して
 物体を数えるモジュール  
 入力されたデータに合わせて個数を数える。個数と認識した物体のリストを返す。  
   
-**入力：String型のtarget　出力：Int64型のnum, String[]型のdata**   
-  
 機能紹介  
 - 入力：`"物体の名前"`　の場合はその物体の数と認識した物体のリストを返す  
 - 入力：`"any"`　の場合は`num=0`と既知の把持可能物体を左から順に並べたリストを返す  
@@ -38,4 +35,3 @@ Actionを通してmanipulation_masterと通信して
 ### Localize Ojbect  
 物体の  
   
-**入力：String型のtarget　出力：geometry_msgs/Point型のdata**
