@@ -22,3 +22,12 @@ Jetson:
 物体の名前を`'any'`とした場合は把持可能な物体を適当に把持します  
 
 把持に成功で`True`, 失敗で`False`を返します  
+  
+# Index  
+### [パッケージの説明](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/README.md)  
+### Manipulation Masterの使い方  
+> 物体認識から把持までの一連のタスクを行うマスターの使い方  
+### [Recognizerの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/recognizer_readme.md)  
+> 物体認識を補助するモジュールの使い方  
+### Grasperの使い方  
+> アームの制御を行うモジュールの使い方  
