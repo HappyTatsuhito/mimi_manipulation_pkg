@@ -3,11 +3,6 @@
 Actionを通してmanipulation_masterと通信して物体認識を行うだけでなく、物体認識の補助機能が搭載されています。  
 このページはその機能（モジュール）をメインに解説しています。  
   
-# Start Up  
-立ち上げはmanipulation_masterの立ち上げと同時に立ち上がります。  
-  
-    $ roslaunch manipulation manipulation.launch  
-  
 # Usage  
 モジュールの使い方について
   |Module|Communication|Name|Type|Input|Output|  
