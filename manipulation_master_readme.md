@@ -3,14 +3,10 @@
 Actionを通してobject_recognizerで物体認識、object_grasperで物体把持を行う  
   
 # Usage  
-物体把持に必要なノードを立ち上げます(RealSenseやdarknetについては省きます)  
-
-    $ roslaunch manipulation manipulation.launch  
-
 競技用マスターからはサービスで立ち上げます  
-  |Name|Type|Args|  
-  |:---:|:---:|:---:|  
-  |/manipulation|manipulation/ManipulateSrv|target(String)|  
+  |Name|Type|Input|Output|  
+  |:---:|:---:|:---:|:---:|  
+  |/manipulation|ManipulateSrv|String型の`target`|Bool型の`result`|  
 
 使用している型は独自srvなのでimportしてください  
 MiniPC(NUC):  
