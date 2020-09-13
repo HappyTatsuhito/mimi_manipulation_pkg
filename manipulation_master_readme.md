@@ -25,6 +25,7 @@ Jetson:
   
 # Index  
 ### [パッケージの説明](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/README.md)  
+> パッケージの概要、立ち上げ等の説明
 ### Manipulation Masterの使い方  
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
 ### [Recognizerの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/recognizer_readme.md)  
