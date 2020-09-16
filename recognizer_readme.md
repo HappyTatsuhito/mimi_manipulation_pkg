@@ -41,5 +41,5 @@ Actionを通してmanipulation_masterと通信して物体認識を行うだけ�
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
 ### Recognizerの使い方  
 > 物体認識を補助するモジュールの使い方  
-### Grasperの使い方  
+### [Grasperの使い方](/grasper_readme.md)  
 > アームの制御を行うモジュールの使い方  
