@@ -7,7 +7,7 @@ Actionを通してmanipulation_masterと通信して物体把持を行うだけ�
 モジュールの使い方について
   |Module|Communication|Name|Type|Input|Output|  
   |:---|:---|:---|:---|:---|:---|  
-  |Control Head|Topic|/servo/head|Float64|-？？～？？||  
+  |Control Head|Topic|/servo/head|Float64|-？？～？？[rad]||  
   |Change Arm Pose|Service|/servo/arm|ManipulateSrv|String型の`target`|Bool型の`result`|  
   
 ## Control Head  
