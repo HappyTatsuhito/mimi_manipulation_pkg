@@ -30,5 +30,5 @@ Jetson:
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
 ### [Recognizerの使い方](/recognizer_readme.md)  
 > 物体認識を補助するモジュールの使い方  
-### Grasperの使い方  
+### [Grasperの使い方](/grasper_readme.md)  
 > アームの制御を行うモジュールの使い方  
