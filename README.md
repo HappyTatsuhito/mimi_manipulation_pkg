@@ -13,9 +13,9 @@
     $ roslaunch manipulation manipulation.launch  
   
 # Index  
-### [Manipulation Masterの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/manipulation_master_readme.md)  
+### [Manipulation Masterの使い方](/manipulation_master_readme.md)  
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
-### [Recognizerの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/recognizer_readme.md)  
+### [Recognizerの使い方](/recognizer_readme.md)  
 > 物体認識を補助するモジュールの使い方  
 ### Grasperの使い方  
 > アームの制御を行うモジュールの使い方  
