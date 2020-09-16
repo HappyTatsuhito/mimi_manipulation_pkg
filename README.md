@@ -10,7 +10,7 @@
 # Start Up  
 上の主な３つの機能に必要なノードはこのコマンドで全て起動します。(RealSenseやdarknetについては省きます)  
 
-    $ roslaunch manipulation manipulation.launch  
+    $ roslaunch mimi_manipulation_pkg manipulation.launch  
   
 # Index  
 ### [Manipulation Masterの使い方](/manipulation_master_readme.md)  
