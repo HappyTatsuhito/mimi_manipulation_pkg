@@ -24,11 +24,11 @@ Jetson:
 把持に成功で`True`, 失敗で`False`を返します  
   
 # Index  
-### [パッケージの説明](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/README.md)  
+### [パッケージの説明](/README.md)  
 > パッケージの概要、立ち上げ等の説明
 ### Manipulation Masterの使い方  
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
-### [Recognizerの使い方](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/recognizer_readme.md)  
+### [Recognizerの使い方](/recognizer_readme.md)  
 > 物体認識を補助するモジュールの使い方  
 ### Grasperの使い方  
 > アームの制御を行うモジュールの使い方  
