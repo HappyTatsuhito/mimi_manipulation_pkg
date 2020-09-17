@@ -1,4 +1,4 @@
-# Overview  
+# Grasperの使い方  
 物体把持を行うノードobject_grasperについて  
 Actionを通してmanipulation_masterと通信して物体把持を行うだけでなく、アームの制御機能が搭載されています。  
 このページはその機能（モジュール）をメインに解説しています。  
