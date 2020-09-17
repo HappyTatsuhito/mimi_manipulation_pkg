@@ -1,4 +1,4 @@
-# Overview  
+# Recognizerの使い方  
 物体認識を行うノードobject_recognizerについて  
 Actionを通してmanipulation_masterと通信して物体認識を行うだけでなく、物体認識の補助機能が搭載されています。  
 このページはその機能（モジュール）をメインに解説しています。  
