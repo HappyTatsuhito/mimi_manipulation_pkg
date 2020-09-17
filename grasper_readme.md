@@ -27,9 +27,6 @@ Actionを通してmanipulation_masterと通信して物体把持を行うだけ�
 - 入力：`"give"`　の場合は把持しているものを他者に渡す。物体を渡し終える、または一定時間経過で自動的に`"carry"`の状態に戻る。  
 - 入力：`"place"`　の場合は把持しているものを正面（？？[m]前方）の机に設置する。使用には条件があり、`/current_location`に現在のロケーション名をpublishする必要がある。物体を設置し終えると自動的に`"carry"`の状態に戻る。  
   
-# Caution  
-  
-  
 # Index  
 ### [パッケージの説明](https://github.com/HappyTatsuhito/mimi_manipulation_pkg/blob/master/README.md)  
 > パッケージの概要、立ち上げ等の説明  
