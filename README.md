@@ -12,7 +12,13 @@
   
 # Start Up  
 必要なノードはこのコマンドで全て起動します。(RealSenseやdarknetについては省きます)  
-
+  
+  モータを制御するドライバの起動  
+  
+    $ roslaunch mimi_manipulation_pkg motor_setup.launch  
+  
+  本パッケージの起動  
+  
     $ roslaunch mimi_manipulation_pkg manipulation.launch  
   
 # Index  
