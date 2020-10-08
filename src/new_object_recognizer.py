@@ -24,14 +24,21 @@ class MimiControl(object):
     def __init__(self):
         
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size=1)
+<<<<<<< HEAD
 
         self.twist_value = Twist()
 
+=======
+
+        self.twist_value = Twist()
+
+>>>>>>> a849b3f... first commit by Laptop 10/8
     def angleRotation(self, degree):
         while degree > 180:
             degree = degree - 360
         while degree < -180:
             degree = degree + 360
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         angular_speed = 70.0 #[deg/s]
@@ -41,6 +48,9 @@ class MimiControl(object):
 =======
         angular_speed = 70.0 #[deg/s]
 >>>>>>> 8c7d05c... Recognizerの角度関係のデバッグとmasterとgrasperのパラメータ調整 by Jetson 20/12/5
+=======
+        angular_speed = 90.0 #[deg/s]
+>>>>>>> a849b3f... first commit by Laptop 10/8
         target_time = abs(1.76899*(degree /angular_speed))  #[s]
         if degree >= 0:
             self.twist_value.angular.z = (angular_speed * 3.14159263 / 180.0) #rad
@@ -52,17 +62,21 @@ class MimiControl(object):
         while end_time - start_time <= target_time:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.cmd_vel_pub.publish(self.twist_value)
             end_time = time.time()
             rate.sleep()
         self.twist_value.angular.z = 0.0
         self.cmd_vel_pub.publish(self.twist_value)
 =======
+=======
+>>>>>>> a849b3f... first commit by Laptop 10/8
             self.pub_twist.publish(self.twist_value)
             end_time = time.time()
             rate.sleep()
         self.twist_value.angular.z = 0.0
         self.pub_twist.publish(self.twist_value)
+<<<<<<< HEAD
 >>>>>>> e485a97... first commit by Laptop 10/8
 =======
             self.cmd_vel_pub.publish(self.twist_value)
@@ -71,6 +85,8 @@ class MimiControl(object):
         self.twist_value.angular.z = 0.0
         self.cmd_vel_pub.publish(self.twist_value)
 >>>>>>> 60f5393... Debug for count, find by Jetson 10/8
+=======
+>>>>>>> a849b3f... first commit by Laptop 10/8
 
     def moveBase(self, rad_speed):
         for speed_i in range(10):
@@ -140,14 +156,20 @@ class RecognizeTools(object):
         find_flg = False
         find_count = 0
 <<<<<<< HEAD
+<<<<<<< HEAD
         while not find_flg and find_count < 10 and not rospy.is_shutdowm():
 =======
+=======
+>>>>>>> f9a228d... first commit by Laptop 10/8
 <<<<<<< HEAD
         while not find_flg and find_count < 10 and not rospy.is_shutdown():
             print type(self.bbox)
 =======
         while not find_flg and find_count <= 3 and not rospy.is_shutdown():
 >>>>>>> 0268ad5... first commit by Laptop 10/8
+=======
+        while not find_flg and find_count <= 3 and not rospy.is_shutdown():
+>>>>>>> a849b3f... first commit by Laptop 10/8
             bbox_list = self.createBboxList(self.bbox)
 <<<<<<< HEAD
 >>>>>>> 0d8b65f... first commit by Laptop 10/8
@@ -250,6 +272,7 @@ class RecognizeTools(object):
             object_count = bbox_list.count(object_name)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             object_list = bbox_list
         return object_count, object_list
 
@@ -259,6 +282,9 @@ class RecognizeTools(object):
 =======
             object_list = bbox_list
 >>>>>>> 60f5393... Debug for count, find by Jetson 10/8
+=======
+            obejct_list = bbox_list
+>>>>>>> a849b3f... first commit by Laptop 10/8
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
@@ -273,10 +299,13 @@ class RecognizeTools(object):
             object_name = object_name.target_name
 =======
             object_name = object_name.target
+<<<<<<< HEAD
 >>>>>>> e485a97... first commit by Laptop 10/8
 =======
             object_name = object_name.target_name
 >>>>>>> 8f5f794... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
+=======
+>>>>>>> a849b3f... first commit by Laptop 10/8
         object_centroid = Point()
         bbox_list = self.createBboxList(bb)
         object_count, _ = self.countObject(object_name)
@@ -357,6 +386,7 @@ class RecognizeAction(object):
         mimi_control = MimiControl()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         #recognize_tools = RecognizeTools()
         move_count = 0
         while not rospy.is_shutdown():
@@ -373,6 +403,19 @@ class RecognizeAction(object):
                         rospy.loginfo('Succeeded')
                         action_result.recog_result = object_centroid
                         self.act.set_succeeded(action_result)
+=======
+        recognize_tools = RecognizeTools()
+        target_dict = recognize_tools.object_dict
+        loop_flg = True
+        while loop_flg and not rospy.is_shutdown():
+            bb = recognize_tools.bbox
+            if target_name in target_dict.keys():
+                for i in range(len(target_dict[target_name])):
+                    rospy.loginfo(target_dict[target_name][i])
+                    object_count, _ = recognize_tools.countObject(target_dict[target_name][i], bb)
+                    if bool(object_count):
+                        target_name = target_dict[target_name][i]
+>>>>>>> a849b3f... first commit by Laptop 10/8
                         break
                     else:
                         # retry
@@ -392,6 +435,7 @@ class RecognizeAction(object):
                     mimi_control.moveBase(move_range)
                     exist_flg = False
             else:
+<<<<<<< HEAD
                 find_flg = self.recognize_tools.findObject(target_name)
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
@@ -418,6 +462,12 @@ if __name__ == '__main__':
             exist_flg = bool(object_count)
             if exist_flg:
                 object_centroid = self.recognize_tools.localizeObject(target_name, bb)
+=======
+                object_count, _ = recognize_tools.countObject(target_name, bb)
+            exist_flg = bool(object_count)
+            if exist_flg:
+                object_centroid = recognize_tools.localizeObject(target_name)
+>>>>>>> a849b3f... first commit by Laptop 10/8
                 if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
                     object_centroid.y += 0.08 # calibrate RealSenseCamera d435
                     object_angle = math.atan2(object_centroid.y, object_centroid.x)/math.pi*180
@@ -445,11 +495,23 @@ if __name__ == '__main__':
                     mimi_control.moveBase(move_range)
                     exist_flg = False
             else:
+<<<<<<< HEAD
                 find_flg = self.recognize_tools.findObject(target_name)
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
             rospy.sleep(1.0) #preemptのズレ調整用
+=======
+                find_flg = recognize_tools.findObject(target_name)
+                ###
+                # ここの続きを書く。
+                # 見つからなかったときにwhileを抜けるように
+                ###
+            if loop_flg:
+                action_feedback.recog_feedback = exist_flg
+                self.act.publish_feedback(action_feedback)
+            exist_flg = False
+>>>>>>> a849b3f... first commit by Laptop 10/8
             if self.preempt_flg:
                 self.preempt_flg = False
                 break
