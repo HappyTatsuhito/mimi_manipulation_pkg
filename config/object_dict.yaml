@@ -1,7 +1,7 @@
 {'red cup':['cup'],
  'blue cup':['cup'],
- 'green snack':['cup'],
  'red snack':['cup'],
+ 'green snack':['cup'],
  'coke':['bottle'],
  'water':['bottle'],
  'any':['cup', 'bottle']
