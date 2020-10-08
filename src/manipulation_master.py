@@ -5,7 +5,6 @@ import rospy
 import actionlib
 # -- ros msgs --
 from std_msgs.msg import String, Float64
-from geometry_msgs.msg import Twist
 # -- ros srvs --
 from mimi_manipulation_pkg.srv import ManipulateSrv
 # -- action msgs --
