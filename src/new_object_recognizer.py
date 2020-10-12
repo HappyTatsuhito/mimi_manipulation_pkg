@@ -187,6 +187,7 @@ class RecognizeTools(object):
             find_count += 1
             rotation_angle = 45 - (((find_count)%4)/2) * 90
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
             object_name = object_name.target_name
@@ -238,6 +239,10 @@ class RecognizeTools(object):
             rospy.sleep(3.0)
             bbox_list = self.createBboxList(self.bbox)
 >>>>>>> df0c7f1... debuged the action by Jetson 20/10/31
+=======
+            mimi_control.angleRotation(rotation_angle)
+            rospy.sleep(4.0)
+>>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
             if object_name == 'None':
                 find_flg = bool(len(self.bbox))
             elif object_name == 'any':
@@ -365,6 +370,7 @@ class RecognizeAction(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.preempt_flg = False
 <<<<<<< HEAD
         self.act.start()
@@ -383,6 +389,8 @@ class RecognizeAction(object):
 >>>>>>> 4c59708... debuged the action by Jetson 20/10/31
 =======
 >>>>>>> 41ea56a... Fixed third debug by Laptop 11/11
+=======
+>>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
         self.act.start()
 >>>>>>> e485a97... first commit by Laptop 10/8
 
@@ -421,10 +429,10 @@ class RecognizeAction(object):
                         self.act.set_succeeded(action_result)
 =======
         recognize_tools = RecognizeTools()
-        target_dict = recognize_tools.object_dict
-        loop_flg = True
-        while loop_flg and not rospy.is_shutdown():
+        move_count = 0
+        while not rospy.is_shutdown():
             bb = recognize_tools.bbox
+<<<<<<< HEAD
             if target_name in target_dict.keys():
                 for i in range(len(target_dict[target_name])):
                     rospy.loginfo(target_dict[target_name][i])
@@ -480,13 +488,20 @@ if __name__ == '__main__':
                 object_centroid = self.recognize_tools.localizeObject(target_name, bb)
 =======
                 object_count, _ = recognize_tools.countObject(target_name, bb)
+=======
+            object_count, _ = recognize_tools.countObject(target_name, bb)
+>>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
             exist_flg = bool(object_count)
             if exist_flg:
                 object_centroid = recognize_tools.localizeObject(target_name)
 >>>>>>> a849b3f... first commit by Laptop 10/8
                 if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
                     object_centroid.y += 0.08 # calibrate RealSenseCamera d435
+<<<<<<< HEAD
                     object_angle = math.atan2(object_centroid.y, object_centroid.x)/math.pi*180
+=======
+                    object_angle = math.atan2(object_centroide.y, object_centroid.x)/math.pi*180
+>>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
                     if abs(object_angle) < 4.5:
                         # success
                         rospy.loginfo('Succeeded')
@@ -507,8 +522,12 @@ if __name__ == '__main__':
                 else:
                     #前後進
                     move_count += 1
+<<<<<<< HEAD
                     move_range = -0.8*(((move_count)%4)/2)+0.4
                     mimi_control.moveBase(move_range)
+=======
+                    move_range = -0.4*(((move_count)%4)/2)+0.2
+>>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
                     exist_flg = False
             else:
 <<<<<<< HEAD
@@ -519,6 +538,7 @@ if __name__ == '__main__':
             rospy.sleep(1.0) #preemptのズレ調整用
 =======
                 find_flg = recognize_tools.findObject(target_name)
+<<<<<<< HEAD
                 ###
                 # ここの続きを書く。
                 # 見つからなかったときにwhileを抜けるように
@@ -528,6 +548,11 @@ if __name__ == '__main__':
                 self.act.publish_feedback(action_feedback)
             exist_flg = False
 >>>>>>> a849b3f... first commit by Laptop 10/8
+=======
+                exist_flg = find_flg:
+            action_feedback.recog_feedback = exist_flg
+            self.act.publish_feedback(action_feedback)
+>>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
             if self.preempt_flg:
                 self.preempt_flg = False
                 break
