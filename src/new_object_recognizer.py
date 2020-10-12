@@ -115,13 +115,15 @@ class RecognizeTools(object):
         while not find_flg and find_count <= 3 and not rospy.is_shutdown():
 >>>>>>> 0268ad5... first commit by Laptop 10/8
             bbox_list = self.createBboxList(self.bbox)
+<<<<<<< HEAD
 >>>>>>> 0d8b65f... first commit by Laptop 10/8
             #rotate
+=======
+>>>>>>> 1ea6bd2... changed the content of the action　by Laptop 10/12
             find_count += 1
             rotation_angle = 45 - (((find_count)%4)/2) * 90
-            print rotation_angle
             mimi_control.angleRotation(rotation_angle)
-            rospy.sleep(2.0)
+            rospy.sleep(4.0)
             if object_name == 'None':
                 find_flg = bool(len(self.bbox))
             elif object_name == 'any':
@@ -189,9 +191,6 @@ class RecognizeAction(object):
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
 
-        self.find_count = 0
-        self.move_count = 0
-
         self.act.start()
 
     def actionPreempt(self):
@@ -206,55 +205,42 @@ class RecognizeAction(object):
         action_result = ObjectRecognizerResult()
         mimi_control = MimiControl()
         recognize_tools = RecognizeTools()
-        target_dict = recognize_tools.object_dict
-        loop_flg = True
-        while loop_flg and not rospy.is_shutdown():
+        move_count = 0
+        while not rospy.is_shutdown():
             bb = recognize_tools.bbox
-            if target_name in target_dict.keys():
-                for i in range(len(target_dict[target_name])):
-                    rospy.loginfo(target_dict[target_name][i])
-                    object_count, _ = recognize_tools.countObject(target_dict[target_name][i], bb)
-                    if bool(object_count):
-                        target_name = target_dict[target_name][i]
-                        break
-            else:
-                object_count, _ = recognize_tools.countObject(target_name, bb)
+            object_count, _ = recognize_tools.countObject(target_name, bb)
             exist_flg = bool(object_count)
             if exist_flg:
                 object_centroid = recognize_tools.localizeObject(target_name)
                 if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
                     object_centroid.y += 0.08 # calibrate RealSenseCamera d435
                     object_angle = math.atan2(object_centroide.y, object_centroid.x)/math.pi*180
-                    if abs(object_angle) > 4.5:
+                    if abs(object_angle) < 4.5:
+                        # success
+                        rospy.loginfo('Succeeded')
+                        action_result.recog_result = object_centroid
+                        self.act.set_succeeded(action_result)
+                        break
+                    else:
                         # retry
                         rospy.loginfo('There is not object in front.')
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)
-                    else:
-                        # success
-                        loop_flg = False
                 else:
                     #前後進
-                    pass
+                    move_count += 1
+                    move_range = -0.4*(((move_count)%4)/2)+0.2
+                    exist_flg = False
             else:
                 find_flg = recognize_tools.findObject(target_name)
-                ###
-                # ここの続きを書く。
-                # 見つからなかったときにwhileを抜けるように
-                ###
-            if loop_flg:
-                action_feedback.recog_feedback = exist_flg
-                self.act.publish_feedback(action_feedback)
-            exist_flg = False
+                exist_flg = find_flg:
+            action_feedback.recog_feedback = exist_flg
+            self.act.publish_feedback(action_feedback)
             if self.preempt_flg:
                 self.preempt_flg = False
                 break
-        else:
-            rospy.loginfo('Succeeded')
-            action_result.recog_result = object_centroid
-            self.act.set_succeeded(action_result)
-                
-                
+
+
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
     recognize_tools = RecognizeTools()
