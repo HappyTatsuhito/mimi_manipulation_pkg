@@ -26,30 +26,22 @@ class ObjectRecognizer(object):
         goal.recog_goal = target_name
         act.send_goal(goal, feedback_cb = self.recognizerFeedback)
         loop_count = 0
-        limit_count = 4.0
+        limit_count = 3.0
         result = None
         while result == None and not rospy.is_shutdown():
             result = act.get_result()
             if self.feedback_flg:
-                '''
-                loop_count -= 1
-                if loop_count < 0:
-                    loop_count = 0
-                '''
                 loop_count = 0
                 limit_count -= 0.5
-                self.feedback_flg = None
             elif self.feedback_flg == False:
-                loop_count += 1
-                self.feedback_flg = None
-            #if loop_count > 4:
+                loop_count += 2
+            self.feedback_flg = None
             if loop_count > limit_count:
                 act._set_simple_state(actionlib.SimpleGoalState.PENDING)
                 act.cancel_goal()
             rospy.Rate(3.0).sleep()
         result = act.get_result()
-        recognize_flg = not(loop_count > limit_count)
-
+        recognize_flg = limit_count > loop_count
         return recognize_flg, result.recog_result
 
 class ObjectGrasper(object):
@@ -81,7 +73,7 @@ def main(req):
     grasp_count = 0
     OR = ObjectRecognizer()
     OG = ObjectGrasper()
-    while recognize_flg and not grasp_flg and grasp_count < 4 and not rospy.is_shutdown():
+    while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
         rospy.loginfo('\n----- Recognizer -----')
         recognize_flg, object_centroid = OR.recognizeObject(req.target)
         if recognize_flg:
@@ -89,7 +81,6 @@ def main(req):
             grasp_flg = OG.graspObject(object_centroid)
             grasp_count += 1
     manipulation_flg = recognize_flg and grasp_flg
-        
     return manipulation_flg
 
     

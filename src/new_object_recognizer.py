@@ -95,10 +95,10 @@ class RecognizeTools(object):
     def initializeBBox(self):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
-            if time.time() - self.update_time > 1.5:# and not self.update_flg:
+            if time.time() - self.update_time > 1.5 and self.update_flg:
                 self.bbox = []
                 self.update_flg = False
-#                rospy.loginfo('initialize') # test
+                rospy.loginfo('initialize') # test
             rate.sleep()
 
     def findObject(self, object_name='None'):
@@ -181,8 +181,10 @@ class RecognizeAction(object):
         self.act.register_preempt_callback(self.actionPreempt)
 
         self.preempt_flg = False
-        self.recognize_tools = RecognizeTools()
         self.act.start()
+
+        self.recognize_tools = RecognizeTools()
+        self.recognize_tools.initializeBBox()
 
     def actionPreempt(self):
         rospy.loginfo('preempt callback')
@@ -200,7 +202,6 @@ class RecognizeAction(object):
         while not rospy.is_shutdown():
             bb = self.recognize_tools.bbox
             object_count, _ = self.recognize_tools.countObject(target_name, bb)
-            rospy.loginfo(object_count)
             exist_flg = bool(object_count)
             if exist_flg:
                 object_centroid = self.recognize_tools.localizeObject(target_name, bb)
@@ -228,6 +229,7 @@ class RecognizeAction(object):
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
+            #rospy.sleep(1.0) #preemptのズレ調整用
             if self.preempt_flg:
                 self.preempt_flg = False
                 break
@@ -236,6 +238,5 @@ class RecognizeAction(object):
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
     recognize_action = RecognizeAction()
-#    recognize_tools = RecognizeTools()
-#    recognize_tools.initializeBBox()
+    #recognize_action.recognize_tools.initializeBBox()
     rospy.spin()
