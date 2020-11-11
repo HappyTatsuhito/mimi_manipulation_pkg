@@ -147,9 +147,10 @@ class RecognizeTools(object):
     def initializeBBox(self):
         rate = rospy.Rate(3.0)
         while not rospy.is_shutdown():
-            if time.time() - self.update_time > 1.5:# and not self.update_flg:
+            if time.time() - self.update_time > 1.5 and self.update_flg:
                 self.bbox = []
                 self.update_flg = False
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -159,6 +160,9 @@ class RecognizeTools(object):
 =======
 #                rospy.loginfo('initialize') # test
 >>>>>>> 735e11b... debuged the action by Jetson 20/10/31
+=======
+                rospy.loginfo('initialize') # test
+>>>>>>> 2b96295... Fixed third debug by Laptop 11/11
             rate.sleep()
 
     def findObject(self, object_name='None'):
@@ -413,10 +417,16 @@ class RecognizeAction(object):
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
 =======
         self.preempt_flg = False
+<<<<<<< HEAD
         self.recognize_tools = RecognizeTools()
 >>>>>>> 735e11b... debuged the action by Jetson 20/10/31
+=======
+>>>>>>> 2b96295... Fixed third debug by Laptop 11/11
         self.act.start()
 >>>>>>> e485a97... first commit by Laptop 10/8
+
+        self.recognize_tools = RecognizeTools()
+        self.recognize_tools.initializeBBox()
 
         self.recognize_tools = RecognizeTools()
         self.recognize_tools.initializeBBox()
@@ -533,7 +543,6 @@ if __name__ == '__main__':
         while not rospy.is_shutdown():
             bb = self.recognize_tools.bbox
             object_count, _ = self.recognize_tools.countObject(target_name, bb)
-            rospy.loginfo(object_count)
             exist_flg = bool(object_count)
             if exist_flg:
                 object_centroid = self.recognize_tools.localizeObject(target_name, bb)
@@ -575,6 +584,7 @@ if __name__ == '__main__':
                 exist_flg = find_flg
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
+<<<<<<< HEAD
             rospy.sleep(1.0) #preemptのズレ調整用
 =======
                 find_flg = recognize_tools.findObject(target_name)
@@ -597,6 +607,9 @@ if __name__ == '__main__':
             action_feedback.recog_feedback = exist_flg
             self.act.publish_feedback(action_feedback)
 >>>>>>> 66eab2a... changed the content of the action　by Laptop 10/12
+=======
+            #rospy.sleep(1.0) #preemptのズレ調整用
+>>>>>>> 2b96295... Fixed third debug by Laptop 11/11
             if self.preempt_flg:
                 self.preempt_flg = False
                 break
@@ -605,6 +618,7 @@ if __name__ == '__main__':
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
     recognize_action = RecognizeAction()
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -620,4 +634,7 @@ if __name__ == '__main__':
 #    recognize_tools = RecognizeTools()
 #    recognize_tools.initializeBBox()
 >>>>>>> 735e11b... debuged the action by Jetson 20/10/31
+=======
+    #recognize_action.recognize_tools.initializeBBox()
+>>>>>>> 2b96295... Fixed third debug by Laptop 11/11
     rospy.spin()
