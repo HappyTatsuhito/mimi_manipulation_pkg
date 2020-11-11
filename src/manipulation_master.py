@@ -42,7 +42,11 @@ class ObjectRecognizer(object):
             rospy.Rate(3.0).sleep()
         result = act.get_result()
         recognize_flg = limit_count > loop_count
+<<<<<<< HEAD
         return recognize_flg, result.recognize_result
+=======
+        return recognize_flg, result.recog_result
+>>>>>>> 2b96295... Fixed third debug by Laptop 11/11
 
 class ObjectGrasper(object):
     def __init__(self):
@@ -74,7 +78,11 @@ def main(req):
     grasp_count = 0
     OR = ObjectRecognizer()
     OG = ObjectGrasper()
+<<<<<<< HEAD
     while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
+=======
+    while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
+>>>>>>> 2b96295... Fixed third debug by Laptop 11/11
         rospy.loginfo('\n----- Recognizer -----')
         recognize_flg, object_centroid = OR.recognizeObject(req.target_name)
         if recognize_flg:
