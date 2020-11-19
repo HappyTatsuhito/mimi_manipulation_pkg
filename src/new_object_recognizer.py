@@ -237,6 +237,9 @@ class RecognizeAction(object):
                     else:
                         # retry
                         rospy.loginfo('There is not object in front.')
+                        bias = 2
+                        object_angle = int(bool(int(x/bias)))*int(x)+int(not int(x/bias))*(x/abs(x))*bias+int(bool(int(x/bias)))*x%(x/abs(x))
+                        # ごめんなさい、どうしても一行で書きたかったんです。
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)
                 else:
