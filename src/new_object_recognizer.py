@@ -481,12 +481,18 @@ class RecognizeAction(object):
                     else:
                         # retry
                         rospy.loginfo('There is not object in front.')
+<<<<<<< HEAD
                         '''
                         bias = 4
                         object_angle = int(bool(int(object_angle/bias)))*int(object_angle)+int(not int(object_angle/bias))*(object_angle/abs(object_angle))*bias+int(bool(int(object_angle/bias)))*object_angle%(object_angle/abs(object_angle))
                         # ごめんなさい、どうしても一行で書きたかったんです。
                         '''
                         if abs(object_angle) < 5: object_angle=object_angle/abs(object_angle)*5
+=======
+                        bias = 2
+                        object_angle = int(bool(int(x/bias)))*int(x)+int(not int(x/bias))*(x/abs(x))*bias+int(bool(int(x/bias)))*x%(x/abs(x))
+                        # ごめんなさい、どうしても一行で書きたかったんです。
+>>>>>>> 6148113... The lower limit of the angle was set. 11/19 by Laptop
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)
                 else:
