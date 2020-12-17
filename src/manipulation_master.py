@@ -136,7 +136,11 @@ def main(req):
     while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
 >>>>>>> f412440... Fourth debug by Jetson 11/12
         rospy.loginfo('\n----- Recognizer -----')
+<<<<<<< HEAD
         recognize_flg, object_centroid = RA.recognizeObject(req.target_name)
+=======
+        recognize_flg, object_centroid = OR.recognizeObject(req.target_name)
+>>>>>>> dced70e... srv変数名の変更 by Laptop 20/12/18
         if recognize_flg:
             rospy.loginfo('\n-----  Grasper   -----')
             grasp_flg = GA.graspObject(object_centroid)
