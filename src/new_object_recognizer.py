@@ -175,6 +175,7 @@ class RecognizeTools(object):
         mimi_control = MimiControl()
         if type(object_name) != str:
 <<<<<<< HEAD
+<<<<<<< HEAD
             object_name = object_name.target
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -211,6 +212,9 @@ class RecognizeTools(object):
 >>>>>>> 09036e0... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
 =======
 >>>>>>> 990dd81... debuged the action by Jetson 20/10/31
+=======
+            object_name = object_name.target_name
+>>>>>>> 144520f... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
         find_flg, _ = self.countObject(object_name)
         loop_count = 0
         while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
@@ -288,11 +292,15 @@ class RecognizeTools(object):
             bb = self.bbox
         if type(object_name) != str:
 <<<<<<< HEAD
+<<<<<<< HEAD
             object_name = object_name.target
 >>>>>>> e485a97... first commit by Laptop 10/8
 =======
             object_name = object_name.target_name
 >>>>>>> 8f5f794... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
+=======
+            object_name = object_name.target_name
+>>>>>>> 144520f... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
         object_list = []
         bbox_list = self.createBboxList(bb)
         if object_name == 'any':
@@ -342,6 +350,7 @@ class RecognizeTools(object):
         if type(object_name) != str:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             object_name = object_name.target_name
 =======
             object_name = object_name.target
@@ -352,6 +361,9 @@ class RecognizeTools(object):
 >>>>>>> 8f5f794... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
 =======
 >>>>>>> a849b3f... first commit by Laptop 10/8
+=======
+            object_name = object_name.target_name
+>>>>>>> 144520f... srv変数名の変更＋回転の最低値処理をif文に by Laptop 20/12/18
         object_centroid = Point()
         bbox_list = self.createBboxList(bb)
         object_count, _ = self.countObject(object_name)
