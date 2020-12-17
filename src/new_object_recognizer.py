@@ -102,7 +102,7 @@ class RecognizeTools(object):
     def findObject(self, object_name='None'):
         mimi_control = MimiControl()
         if type(object_name) != str:
-            object_name = object_name.target
+            object_name = object_name.target_name
         find_flg, _ = self.countObject(object_name)
         loop_count = 0
         while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
@@ -123,7 +123,7 @@ class RecognizeTools(object):
         if bb is None:
             bb = self.bbox
         if type(object_name) != str:
-            object_name = object_name.target
+            object_name = object_name.target_name
         object_list = []
         bbox_list = self.createBboxList(bb)
         if object_name == 'any':
@@ -145,7 +145,7 @@ class RecognizeTools(object):
         if bb is None:
             bb = self.bbox
         if type(object_name) != str:
-            object_name = object_name.target
+            object_name = object_name.target_name
         object_centroid = Point()
         bbox_list = self.createBboxList(bb)
         object_count, _ = self.countObject(object_name)
@@ -215,9 +215,12 @@ class RecognizeAction(object):
                     else:
                         # retry
                         rospy.loginfo('There is not object in front.')
+                        '''
                         bias = 4
                         object_angle = int(bool(int(object_angle/bias)))*int(object_angle)+int(not int(object_angle/bias))*(object_angle/abs(object_angle))*bias+int(bool(int(object_angle/bias)))*object_angle%(object_angle/abs(object_angle))
                         # ごめんなさい、どうしても一行で書きたかったんです。
+                        '''
+                        if abs(object_angle) < 5: object_angle=object_angle/abs(object_angle)*5
                         mimi_control.angleRotation(object_angle)
                         rospy.sleep(4.0)
                 else:
