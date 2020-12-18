@@ -1,7 +1,7 @@
 <!-- -*- mode: XML -*- -->
 <launch>
   <rosparam file="$(find mimi_manipulation_pkg)/config/object_dict.yaml" command="load" ns="object_dict"/> 
-  <!-- <node pkg="mimi_manipulation_pkg" name="new_object_recognizer" type="new_object_recognizer.py" /> -->
+  <!-- <node pkg="mimi_manipulation_pkg" name="object_recognizer" type="object_recognizer.py" /> -->
   <node pkg="mimi_manipulation_pkg" name="centroid_detector" type="object_centroid_detector" />
   <!-- <rosparam file="$(find mimi_manipulation_pkg)/config/location_list.yaml" command="load"/> -->
   <node pkg="mimi_manipulation_pkg" name="object_grasper" type="object_grasper.py" />
