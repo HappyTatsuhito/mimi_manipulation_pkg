@@ -12,9 +12,9 @@ if __name__ == "__main__":
 
     rospy.init_node("test_recognizer")
 
-    count_object = rospy.ServiceProxy("/recog/count", RecognizeCount)
-    find_object = rospy.ServiceProxy("/recog/find", RecognizeFind)
-    localize_object = rospy.ServiceProxy("/recog/localize", RecognizeLocalize)
+    count_object = rospy.ServiceProxy("/recognize/count", RecognizeCount)
+    find_object = rospy.ServiceProxy("/recognize/find", RecognizeFind)
+    localize_object = rospy.ServiceProxy("/recognize/localize", RecognizeLocalize)
 
     rospy.wait_for_service("/recog/count")
     res = count_object(target_name)
