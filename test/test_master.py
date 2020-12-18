@@ -2,14 +2,19 @@
 # -*- coding: utf-8 -*
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import sys
 =======
 >>>>>>> eaa596d... テストコード用のtestディレクトリの作成 by Laptop 20/12/18
+=======
+import sys
+>>>>>>> e6bb873... create testcode by Laptop 20/12/18
 import rospy
 from mimi_manipulation_pkg.srv import ManipulateSrv
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
 <<<<<<< HEAD
     args = sys.argv
 
@@ -30,3 +35,14 @@ if __name__ == "__main__":
     rospy.init_node("test_master")
     print "ok"
 >>>>>>> eaa596d... テストコード用のtestディレクトリの作成 by Laptop 20/12/18
+=======
+    args = sys.argv
+
+    rospy.init_node("test_master")
+
+    manipulation_master = rospy.ServiceProxy("/manipulation", ManipulateSrv)
+
+    rospy.wait_for_service("/manipulation")
+    res = manipulation_master(args[-1])
+    rospy.loginfo("manipulation_master\n", res.result)
+>>>>>>> e6bb873... create testcode by Laptop 20/12/18
