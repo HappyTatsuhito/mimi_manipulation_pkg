@@ -43,10 +43,14 @@ class ObjectRecognizer(object):
         result = act.get_result()
         recognize_flg = limit_count > loop_count
 <<<<<<< HEAD
+<<<<<<< HEAD
         return recognize_flg, result.recognize_result
 =======
         return recognize_flg, result.recog_result
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
+=======
+        return recognize_flg, result.recognize_result
+>>>>>>> dade092... renamed action by Laptop 20/12/18
 
 class ObjectGrasper(object):
     def __init__(self):
