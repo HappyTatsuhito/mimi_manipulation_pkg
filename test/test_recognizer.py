@@ -26,6 +26,7 @@ if __name__ == "__main__":
     rospy.init_node("test_recognizer")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     count_object = rospy.ServiceProxy("/recognize/count", RecognizeCount)
 <<<<<<< HEAD
     find_object = rospy.ServiceProxy("/recognize/find", RecognizeFind)
@@ -41,6 +42,11 @@ if __name__ == "__main__":
     count_object = rospy.ServiceProxy("/recog/count", RecognizeCount)
     find_object = rospy.ServiceProxy("/recog/find", RecognizeFind)
     localize_object = rospy.ServiceProxy("/recog/localize", RecognizeLocalize)
+=======
+    count_object = rospy.ServiceProxy("/recognize/count", RecognizeCount)
+    find_object = rospy.ServiceProxy("/recognize/find", RecognizeFind)
+    localize_object = rospy.ServiceProxy("/recognize/localize", RecognizeLocalize)
+>>>>>>> 3a3c737... renamed recog -> recognize by Laptop 20/12/18
 
     rospy.wait_for_service("/recog/count")
 >>>>>>> e6bb873... create testcode by Laptop 20/12/18
