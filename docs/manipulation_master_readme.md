@@ -12,7 +12,7 @@ Actionを通してobject_recognizerで物体認識、object_grasperで物体把�
 MiniPC(NUC):  
     **`from mimi_common_pkg.srv import ManipulateSrv`**  
 Jetson:  
-    **`from mimi_manipulation_pkg import ManipulateSrv`**  
+    **`from mimi_manipulation_pkg.srv import ManipulateSrv`**  
 
 例としてこんな感じ  
     **`rospy.ServiceProxy('/manipulation', ManipulateSrv)`**  
