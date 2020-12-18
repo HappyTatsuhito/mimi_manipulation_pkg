@@ -70,6 +70,7 @@ class RecognizerAction(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         return recognize_flg, result.recognize_result
 =======
 =======
@@ -80,6 +81,9 @@ class RecognizerAction(object):
 =======
         print result
 >>>>>>> 0c855a3... enum testのデバッグ1 21/3/10 by Jetson
+        return recognize_flg, result.recognize_result
+>>>>>>> dade092... renamed action by Laptop 20/12/18
+=======
         return recognize_flg, result.recognize_result
 >>>>>>> dade092... renamed action by Laptop 20/12/18
 
