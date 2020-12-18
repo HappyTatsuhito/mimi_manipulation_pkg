@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
+<<<<<<< HEAD
 
 import sys
 import rospy
@@ -56,3 +57,5 @@ if __name__ == "__main__":
     rospy.loginfo("Localize Ojbect")
     rospy.loginfo(res)
 >>>>>>> 16e7e2b... testのデバッグ完了 21/3/10 by Jetson
+=======
+>>>>>>> eaa596d... テストコード用のtestディレクトリの作成 by Laptop 20/12/18
