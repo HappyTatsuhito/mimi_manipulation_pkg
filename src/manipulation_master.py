@@ -23,7 +23,7 @@ class ObjectRecognizer(object):
         rospy.loginfo('Start action with Recognizer')
         act.wait_for_server(rospy.Duration(5))
         goal = ObjectRecognizerGoal()
-        goal.recog_goal = target_name
+        goal.recognize_goal = target_name
         act.send_goal(goal, feedback_cb = self.recognizerFeedback)
         loop_count = 0
         limit_count = 3.0
@@ -42,7 +42,7 @@ class ObjectRecognizer(object):
             rospy.Rate(3.0).sleep()
         result = act.get_result()
         recognize_flg = limit_count > loop_count
-        return recognize_flg, result.recog_result
+        return recognize_flg, result.recognize_result
 
 class ObjectGrasper(object):
     def __init__(self):
