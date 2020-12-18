@@ -24,9 +24,9 @@
 # Index  
 ### パッケージの説明  
 > パッケージの概要、立ち上げ等の説明  
-### [Manipulation Masterの使い方](/manipulation_master_readme.md)  
+### [Manipulation Masterの使い方](/docs/manipulation_master_readme.md)  
 > 物体認識から把持までの一連のタスクを行うマスターの使い方  
-### [Recognizerの使い方](/recognizer_readme.md)  
+### [Recognizerの使い方](/docs/recognizer_readme.md)  
 > 物体認識を補助するモジュールの使い方  
-### [Grasperの使い方](/grasper_readme.md)  
+### [Grasperの使い方](/docs/grasper_readme.md)  
 > アームの制御を行うモジュールの使い方  
