@@ -13,10 +13,7 @@ MiniPC(NUC):
     **`from mimi_common_pkg.srv import ManipulateSrv`**  
 Jetson:  
     **`from mimi_manipulation_pkg.srv import ManipulateSrv`**  
-
-例としてこんな感じ  
-    **`rospy.ServiceProxy('/manipulation', ManipulateSrv)`**  
-
+  
 # Input and Output  
 把持したい物体の名前(darknetに表示される名称)をString型で引数として呼び出して下さい  
 物体の名前を`'any'`とした場合は把持可能な物体を適当に把持します  
