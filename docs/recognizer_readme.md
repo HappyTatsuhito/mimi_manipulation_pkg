@@ -7,9 +7,9 @@ Actionを通してmanipulation_masterと通信して物体認識を行うだけ�
 モジュールの使い方について
   |Module|Communication|Name|Type|Input|Output|  
   |:---|:---|:---|:---|:---|:---|  
-  |Find Object|Service|/recog/find|RecognizeFind|String型の`target`|Bool型の`result`|  
-  |Count Object|Service|/recog/count|RecognizeCount|String型の`target`|Int64型の`num`, String[]型の`data`|  
-  |Localize Object|Service|/recog/localize|RecognizeLocalize|String型の`target`|geometry_msgs/Point型の`data`|  
+  |Find Object|Service|/recognize/find|RecognizeFind|String型の`target`|Bool型の`result`|  
+  |Count Object|Service|/recognize/count|RecognizeCount|String型の`target`|Int64型の`num`, String[]型の`data`|  
+  |Localize Object|Service|/recognize/localize|RecognizeLocalize|String型の`target`|geometry_msgs/Point型の`data`|  
   
 ## Find Ojbect  
 物体を見つけるモジュール  
