@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
+from enum import Enum
 import rospy
 import actionlib
 # -- ros msgs --
@@ -10,13 +11,18 @@ from mimi_manipulation_pkg.srv import ManipulateSrv
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
-class ObjectRecognizer(object):
+class ResultState(Enum):
+    success = 1
+    wait = 2
+    failure = 3
+
+class RecognizerAction(object):
     def __init__(self):
-        self.feedback_flg = None
+        self.recognize_feedback = ResultState.wait
 
     def recognizerFeedback(self,msg):
         rospy.loginfo('feedback : %s'%(msg))
-        self.feedback_flg = msg.recognize_feedback
+        self.recognize_feedback = ResultState.success if msg.recognize_feedback else ResultState.failure
         
     def recognizeObject(self,target_name):
         act = actionlib.SimpleActionClient('/manipulation/localize', ObjectRecognizerAction)
@@ -27,18 +33,21 @@ class ObjectRecognizer(object):
         act.send_goal(goal, feedback_cb = self.recognizerFeedback)
         loop_count = 0
         limit_count = 3.0
-        result = None
-        while result == None and not rospy.is_shutdown():
+        result = ResultState.wait
+        while result == ResultState.wait and not rospy.is_shutdown():
             result = act.get_result()
-            if self.feedback_flg:
+            if self.recognize_feedback == ResultState.success:
                 loop_count = 0
                 limit_count -= 0.5
-            elif self.feedback_flg == False:
+                self.recognize_feedback = ResultState.wait
+            elif self.recognize_feedback == ResultState.failure:
                 loop_count += 2
-            self.feedback_flg = None
+                self.recognize_feedback = ResultState.wait
             if loop_count > limit_count:
                 act._set_simple_state(actionlib.SimpleGoalState.PENDING)
                 act.cancel_goal()
+                rospy.sleep(1.0)
+                break
             rospy.Rate(3.0).sleep()
         result = act.get_result()
         recognize_flg = limit_count > loop_count
@@ -52,7 +61,7 @@ class ObjectRecognizer(object):
         return recognize_flg, result.recognize_result
 >>>>>>> dade092... renamed action by Laptop 20/12/18
 
-class ObjectGrasper(object):
+class GrasperAction(object):
     def __init__(self):
         pass
 
@@ -80,6 +89,7 @@ def main(req):
     recognize_flg = True
     grasp_flg = False
     grasp_count = 0
+<<<<<<< HEAD
     OR = ObjectRecognizer()
     OG = ObjectGrasper()
 <<<<<<< HEAD
@@ -89,13 +99,17 @@ def main(req):
     while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
 =======
+=======
+    RA = RecognizerAction()
+    GA = GrasperAction()
+>>>>>>> 4d5541b... testとmasterのデバッグ by Laptop 20/12/24
     while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
 >>>>>>> f412440... Fourth debug by Jetson 11/12
         rospy.loginfo('\n----- Recognizer -----')
-        recognize_flg, object_centroid = OR.recognizeObject(req.target_name)
+        recognize_flg, object_centroid = RA.recognizeObject(req.target_name)
         if recognize_flg:
             rospy.loginfo('\n-----  Grasper   -----')
-            grasp_flg = OG.graspObject(object_centroid)
+            grasp_flg = GA.graspObject(object_centroid)
             grasp_count += 1
     manipulation_flg = recognize_flg and grasp_flg
     return manipulation_flg
