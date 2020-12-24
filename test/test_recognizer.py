@@ -3,32 +3,27 @@
 
 import sys
 import rospy
+# -- ros srvs --
 from mimi_manipulation_pkg.srv import RecognizeCount, RecognizeFind, RecognizeLocalize
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = sys.argv
     target_name = args[-1]
-
-    rospy.init_node("test_recognizer")
-
-    count_object = rospy.ServiceProxy("/recognize/count", RecognizeCount)
-    find_object = rospy.ServiceProxy("/recognize/find", RecognizeFind)
-    localize_object = rospy.ServiceProxy("/recognize/localize", RecognizeLocalize)
-
-    rospy.sleep(1.0)
-    rospy.loginfo("wait")
-
-    rospy.wait_for_service("/recog/count")
-    rospy.sleep(1.0)
-    rospy.loginfo("wait2")
-    res = count_object(target_name)
-    rospy.loginfo("module : count\n", res.object_num, res.object_list)
     
-    rospy.wait_for_service("/recog/find")
-    res = find_object(target_name)
-    rospy.loginfo("\nmodule : find\n", res.result)
+    rospy.init_node('test_recognizer')
 
-    rospy.wait_for_service("/recog/localize")
-    res = localize_object(target_name)
-    rospy.loginfo("\nmodule : localize\n", res.centroid_point)
+    find_object = rospy.ServiceProxy("/recognize/find", RecognizeFind)
+    count_object = rospy.ServiceProxy("/recognize/count", RecognizeCount)
+    localize_ojbect = rospy.ServiceProxy("/recognize/localize", RecognizeLocalize)
+
+    rospy.wait_for_service("/recognize/find")
+    res = find_ojbect(target_name)
+    rospy.loginfo("module : find\n", res.result)
+
+    rospy.wait_for_service("/recognize/count")
+    res = count_ojbect(target_name)
+    rospy.loginfo("\nmodule : count\n", res.result)
+
+    rospy.wait_for_service("/recognize/localize")
+    res = localize_ojbect(target_name)
+    rospy.loginfo("\nmodule : localize\n", res.result)

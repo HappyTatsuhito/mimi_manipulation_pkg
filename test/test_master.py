@@ -3,16 +3,17 @@
 
 import sys
 import rospy
+# -- ros srvs --
 from mimi_manipulation_pkg.srv import ManipulateSrv
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = sys.argv
-
-    rospy.init_node("test_master")
+    target_name = args[-1]
+    
+    rospy.init_node('test_master')
 
     manipulation_master = rospy.ServiceProxy("/manipulation", ManipulateSrv)
 
     rospy.wait_for_service("/manipulation")
-    res = manipulation_master(args[-1])
+    res = manipulation_master(target_name)
     rospy.loginfo("manipulation_master\n", res.result)
