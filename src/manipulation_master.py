@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
+from enum import Enum
 import rospy
 import actionlib
 from enum import Enum
@@ -23,10 +24,14 @@ class RecognizerAction(object):
     def recognizerFeedback(self,msg):
         rospy.loginfo('feedback : %s'%(msg))
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.recognize_feedback = ResultState.success if msg.recognize_feedback else ResultState.failure
 =======
         self.feedback_flg = msg.recognize_feedback
 >>>>>>> 88fc288... action, srvの変更をしたのでそれのデバッグ(testは未完) by Jetson 20/12/18
+=======
+        self.recognize_feedback = ResultState.success if msg.recognize_feedback else ResultState.failure
+>>>>>>> 4d5541b... testとmasterのデバッグ by Laptop 20/12/24
         
     def recognizeObject(self,target_name):
         act = actionlib.SimpleActionClient('/manipulation/localize', ObjectRecognizerAction)
@@ -37,6 +42,7 @@ class RecognizerAction(object):
         act.send_goal(goal, feedback_cb = self.recognizerFeedback)
         loop_count = 0
         limit_count = 3.0
+<<<<<<< HEAD
 <<<<<<< HEAD
         result = ResultState.wait
         while result == ResultState.wait and not rospy.is_shutdown():
@@ -54,14 +60,23 @@ class RecognizerAction(object):
 =======
         result = None
         while result == None and not rospy.is_shutdown():
+=======
+        result = ResultState.wait
+        while result == ResultState.wait and not rospy.is_shutdown():
+>>>>>>> 4d5541b... testとmasterのデバッグ by Laptop 20/12/24
             result = act.get_result()
-            if self.feedback_flg:
+            if self.recognize_feedback == ResultState.success:
                 loop_count = 0
                 limit_count -= 0.5
-            elif self.feedback_flg == False:
+                self.recognize_feedback = ResultState.wait
+            elif self.recognize_feedback == ResultState.failure:
                 loop_count += 2
+<<<<<<< HEAD
             self.feedback_flg = None
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
+=======
+                self.recognize_feedback = ResultState.wait
+>>>>>>> 4d5541b... testとmasterのデバッグ by Laptop 20/12/24
             if loop_count > limit_count:
                 act._set_simple_state(actionlib.SimpleGoalState.PENDING)
                 act.cancel_goal()
@@ -120,6 +135,7 @@ def main(req):
     grasp_flg = False
     grasp_count = 0
 <<<<<<< HEAD
+<<<<<<< HEAD
     OR = ObjectRecognizer()
     OG = ObjectGrasper()
 <<<<<<< HEAD
@@ -141,14 +157,22 @@ def main(req):
     while recognize_flg and not grasp_flg and grasp_count < 2 and not rospy.is_shutdown():
 >>>>>>> 2b96295... Fixed third debug by Laptop 11/11
 =======
+=======
+    RA = RecognizerAction()
+    GA = GrasperAction()
+>>>>>>> 4d5541b... testとmasterのデバッグ by Laptop 20/12/24
     while recognize_flg and not grasp_flg and grasp_count < 3 and not rospy.is_shutdown():
 >>>>>>> f412440... Fourth debug by Jetson 11/12
         rospy.loginfo('\n----- Recognizer -----')
+<<<<<<< HEAD
 <<<<<<< HEAD
         recognize_flg, object_centroid = RA.recognizeObject(req.target_name)
 =======
         recognize_flg, object_centroid = OR.recognizeObject(req.target_name)
 >>>>>>> dced70e... srv変数名の変更 by Laptop 20/12/18
+=======
+        recognize_flg, object_centroid = RA.recognizeObject(req.target_name)
+>>>>>>> 4d5541b... testとmasterのデバッグ by Laptop 20/12/24
         if recognize_flg:
             rospy.loginfo('\n-----  Grasper   -----')
             grasp_flg = GA.graspObject(object_centroid)
