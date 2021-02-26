@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
-from enum import Enum
 import rospy
 import actionlib
+from enum import Enum
 # -- ros msgs --
 from std_msgs.msg import String, Float64
 # -- ros srvs --
