@@ -11,11 +11,15 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  std_srvs
   pcl_ros
   sensor_msgs
   geometry_msgs
+  cv_bridge
+  image_transport
   message_generation
   )
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -51,10 +55,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  ImageRange.msg
-)
+##add_message_files(
+##  FILES
+##)
 
 ## Generate services in the 'srv' folder
 add_service_files(
@@ -63,6 +66,7 @@ add_service_files(
   RecognizeFind.srv
   RecognizeCount.srv
   RecognizeLocalize.srv
+  DetectDepth.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -113,9 +117,9 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+#  INCLUDE_DIRS include
 #  LIBRARIES mimi_manipulation_pkg
-  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+#  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -126,10 +130,10 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  /usr/local/include
+  include
   ${catkin_INCLUDE_DIRS}
-  include/
-)
+  ${OpenCV_INCLUDE_DIRS}
+  )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -158,9 +162,11 @@ add_executable(object_centroid_detector src/object_centroid_detector.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(object_centroid_detector
+target_link_libraries(
+  object_centroid_detector
   ${catkin_LIBRARIES}
-)
+  ${OpenCV_INCLUDE_DIRS}
+  )
 
 #############
 ## Install ##
