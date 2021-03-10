@@ -77,33 +77,9 @@ class CallDetector(object):
 class RecognizeTools(object):
     def __init__(self):
         bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         recognize_find_srv = rospy.Service('/recognize/find',RecognizeFind,self.findObject)
         recognize_count_srv = rospy.Service('/recognize/count',RecognizeCount,self.countObject)
         recognize_localize_srv = rospy.Service('/recognize/localize',RecognizeLocalize,self.localizeObject)
-=======
-        recog_find_srv = rospy.Service('/recog/find',RecognizeFind,self.findObject)
-        recog_count_srv = rospy.Service('/recog/count',RecognizeCount,self.countObject)
-        recog_localize_srv = rospy.Service('/recog/localize',RecognizeLocalize,self.localizeObject)
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-        recognize_find_srv = rospy.Service('/recognize/find',RecognizeFind,self.findObject)
-        recognize_count_srv = rospy.Service('/recognize/count',RecognizeCount,self.countObject)
-        recognize_localize_srv = rospy.Service('/recognize/localize',RecognizeLocalize,self.localizeObject)
->>>>>>> dade092... renamed action by Laptop 20/12/18
-=======
-        recog_find_srv = rospy.Service('/recog/find',RecognizeFind,self.findObject)
-        recog_count_srv = rospy.Service('/recog/count',RecognizeCount,self.countObject)
-        recog_localize_srv = rospy.Service('/recog/localize',RecognizeLocalize,self.localizeObject)
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-        recognize_find_srv = rospy.Service('/recognize/find',RecognizeFind,self.findObject)
-        recognize_count_srv = rospy.Service('/recognize/count',RecognizeCount,self.countObject)
-        recognize_localize_srv = rospy.Service('/recognize/localize',RecognizeLocalize,self.localizeObject)
->>>>>>> dade092... renamed action by Laptop 20/12/18
 
         self.object_dict = rosparam.get_param('/object_dict')
         self.bbox = []
@@ -224,23 +200,7 @@ class RecognizeAction(object):
         self.preempt_flg = True
 
     def actionMain(self, goal):
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         target_name = goal.recognize_goal
-=======
-        target_name = goal.recog_goal
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-        target_name = goal.recognize_goal
->>>>>>> dade092... renamed action by Laptop 20/12/18
-=======
-        target_name = goal.recog_goal
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-        target_name = goal.recognize_goal
->>>>>>> dade092... renamed action by Laptop 20/12/18
         rospy.loginfo('start action >> recognize %s'%(target_name))
         action_feedback = ObjectRecognizerFeedback()
         action_result = ObjectRecognizerResult()
@@ -259,23 +219,7 @@ class RecognizeAction(object):
                     if abs(object_angle) < 4.5:
                         # success
                         rospy.loginfo('Succeeded')
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
                         action_result.recognize_result = object_centroid
-=======
-                        action_result.recog_result = object_centroid
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-                        action_result.recognize_result = object_centroid
->>>>>>> dade092... renamed action by Laptop 20/12/18
-=======
-                        action_result.recog_result = object_centroid
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-                        action_result.recognize_result = object_centroid
->>>>>>> dade092... renamed action by Laptop 20/12/18
                         self.act.set_succeeded(action_result)
                         break
                     else:
@@ -298,23 +242,7 @@ class RecognizeAction(object):
             else:
                 find_flg = self.recognize_tools.findObject(target_name)
                 exist_flg = find_flg
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             action_feedback.recognize_feedback = exist_flg
-=======
-            action_feedback.recog_feedback = exist_flg
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-            action_feedback.recognize_feedback = exist_flg
->>>>>>> dade092... renamed action by Laptop 20/12/18
-=======
-            action_feedback.recog_feedback = exist_flg
->>>>>>> ccecb1a... renamed new_ob_rec -> ob_rec by Laptop 20/12/18
-=======
-            action_feedback.recognize_feedback = exist_flg
->>>>>>> dade092... renamed action by Laptop 20/12/18
             self.act.publish_feedback(action_feedback)
             rospy.sleep(1.0) #preemptのズレ調整用
             if self.preempt_flg:
