@@ -63,7 +63,7 @@ class MimiControl(object):
         
 class CallDetector(object):
     def __init__(self):
-        detect_depth = rospy.ServiceProxy('/detect/depth',TestDepth)
+        detect_depth = rospy.ServiceProxy('/detect/depth',DetectDepth)
 
         self.object_centroid = Point()
         
