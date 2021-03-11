@@ -13,7 +13,7 @@ from geometry_msgs.msg import Twist, Point
 from darknet_ros_msgs.msg import BoundingBoxes
 from mimi_manipulation_pkg.msg import ImageRange
 # -- ros srvs --
-from mimi_manipulation_pkg.srv import RecognizeFind, RecognizeCount, RecognizeLocalize
+from mimi_manipulation_pkg.srv import RecognizeFind, RecognizeCount, RecognizeLocalize, DetectDepth
 # -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
@@ -63,15 +63,14 @@ class MimiControl(object):
         
 class CallDetector(object):
     def __init__(self):
-        detector_sub = rospy.Subscriber('/object/xyz_centroid',Point,self.detectorCB)
-        self.image_range_pub = rospy.Publisher('/object/image_range',ImageRange,queue_size=1)
+        detect_depth = rospy.ServiceProxy('/detect/depth',TestDepth)
 
         self.object_centroid = Point()
-        self.centroid_flg = False
         
-    def detectorCB(self, res):
-        self.object_centroid = res
-        self.centroid_flg = True
+    def detectorService(self, center_x, center_y):
+        rospy.wait_for_service("/detect/depth")
+        res = detect_depth(center_x, center_y)
+        self.object_centroid = res.centroid_point
         
 
 class RecognizeTools(object):
@@ -165,18 +164,11 @@ class RecognizeTools(object):
             object_centroid.y = numpy.nan
             object_centroid.z = numpy.nan
             return object_centroid
-        index_num = bbox_list.index(object_name)
-        image_range = ImageRange()
-        image_range.top = bb[index_num].ymin
-        image_range.bottom = bb[index_num].ymax
-        image_range.left = bb[index_num].xmin
-        image_range.right = bb[index_num].xmax
+        center_x = int((bb[index_num].ymin + bb[index_num].ymax)/2)
+        center_y = int((bb[index_num].xmin + bb[index_num].xmax)/2)
         rospy.sleep(0.5)
-        Detector.image_range_pub.publish(image_range)
-        while Detector.centroid_flg == False and not rospy.is_shutdown():
-            pass
+        Detector.detectorService(center_x, center_y)
         object_centroid = Detector.object_centroid
-        Detector.centroid_flg = False
         return object_centroid
         
         

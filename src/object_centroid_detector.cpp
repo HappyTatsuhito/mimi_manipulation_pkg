@@ -44,6 +44,9 @@ bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulatio
   bool convert_result = convertImage(current_depth_image, cv_image);
 
   if(!convert_result){
+	res.centroid_point.x = std::numeric_limits<float>::quiet_NaN();
+	res.centroid_point.y = std::numeric_limits<float>::quiet_NaN();
+	res.centroid_point.z = std::numeric_limits<float>::quiet_NaN();
 	return false;
   }
 
