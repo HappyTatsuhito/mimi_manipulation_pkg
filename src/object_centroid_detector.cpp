@@ -10,6 +10,7 @@
 #include <geometry_msgs/Point.h>
 #include <mimi_manipulation_pkg/DetectDepth.h>
 
+float REALSENSE_HEIGHT = 1.05;
 sensor_msgs::ImageConstPtr depth_image;
 
 void realSenseCB(const sensor_msgs::ImageConstPtr& ros_image){
@@ -50,10 +51,10 @@ bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulatio
 	return false;
   }
 
-  double distance = cv_image.at<u_int16_t>(req.center_x, req.center_y);
+  float distance = cv_image.at<u_int16_t>(req.center_x, req.center_y);
   ROS_INFO("%f", distance);
 
-  double theta_y, theta_z, centroid_x, centroid_y, centroid_z;
+  float theta_y, theta_z, centroid_x, centroid_y, centroid_z;
 	
   theta_y = ((req.center_y-320)*53.6/640)/180*M_PI;
   theta_z = (-1*(req.center_x-240)*41.0/480)/180*M_PI;
@@ -75,7 +76,7 @@ bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulatio
   
   res.centroid_point.x = centroid_x;
   res.centroid_point.y = centroid_y;
-  res.centroid_point.z = centroid_z;
+  res.centroid_point.z = centroid_z + REALSENSE_HEIGHT;
   return true;  
 }
 
