@@ -102,16 +102,29 @@ class ObjectGrasper(ArmPoseChanger):
             return False
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.5)
-        move_range = object_centroid.x - ((object_centroid.x-0.6)/1.5)
-        move_range = (0.17+move_range+0.15-(x+0.2))*4.3
+        #move_range = object_centroid.x - ((object_centroid.x-0.6)/1.5)
+        #move_range = (0.17+move_range+0.15-(x+0.2))*4.3
+        
+        ###
+        self.moveBase(0.5)
+        rospy.sleep(0.3)
+        self.moveBase(1.0)
+        rospy.sleep(0.3)
+        self.moveBase(-0.5)
+        rospy.sleep(0.3)
+        self.moveBase(-1.0)
+        rospy.sleep(0.3)
+        move_range = 0.5 + (object_centroid.x + 0.05 - x)*4.0
+        ###
+        
         self.moveBase(move_range*0.7)
         rospy.sleep(0.3)
-        self.moveBase(move_range*0.4)
+        self.moveBase(move_range*0.3)
         grasp_flg = self.endeffectorPub(True)
         rospy.sleep(1.0)
         self.shoulderPub(joint_angle[0]+0.1)
         self.moveBase(-0.9)
-        #self.shoulderPub(0.7) # 重い物体を把持した場合に必要
+        #self.shoulderPub(0.7) # 重い物体を把持する場合に必要
         self.changeArmPose('carry')
         rospy.sleep(4.0)
         if grasp_flg :
