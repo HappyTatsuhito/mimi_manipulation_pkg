@@ -77,7 +77,7 @@ class GrasperAction(object):
 
         return result.grasp_result
 
-def main(req):
+def actionMain(req):
     head_pub = rospy.Publisher('/servo/head',Float64,queue_size=1)
     rospy.sleep(0.2)
     head_pub.publish(-0.4363)
@@ -101,5 +101,5 @@ def main(req):
 if __name__ == '__main__':
     rospy.init_node('manipulation_master')
     # -- service server --
-    manipulation = rospy.Service('/manipulation',ManipulateSrv, main)
+    manipulation = rospy.Service('/manipulation',ManipulateSrv, actionMain)
     rospy.spin()
