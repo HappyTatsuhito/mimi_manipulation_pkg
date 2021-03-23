@@ -6,7 +6,7 @@ Actionを通してobject_recognizerで物体認識、object_grasperで物体把�
 競技用マスターからはサービスで立ち上げます  
   |Name|Type|Input|Output|  
   |:---|:---|:---|:---|  
-  |/manipulation|ManipulateSrv|String型の`target`|Bool型の`result`|  
+  |/manipulation|ManipulateSrv|String型の`target_name`|Bool型の`result`|  
 
 使用している型は独自srvなのでimportしてください  
 MiniPC(NUC):  
