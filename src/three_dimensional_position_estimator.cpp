@@ -8,16 +8,43 @@
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
 #include <geometry_msgs/Point.h>
+// custom srv
 #include <mimi_manipulation_pkg/DetectDepth.h>
 
-float REALSENSE_HEIGHT = 1.05;
-sensor_msgs::ImageConstPtr depth_image;
+class ThreeDimensionalPositionEstimator
+{
+public:
+  ThreeDimensionalPositionEstimator();
+  ~ThreeDimensionalPositionEstimator(){};
 
-void realSenseCB(const sensor_msgs::ImageConstPtr& ros_image){
+private:
+  ros::NodeHandle nh;
+  /* -- topic -- */
+  ros::Subscriber realsense_subscriber;
+  /* -- service -- */
+  ros::ServiceServer estimate_server;
+  /* -- param -- */
+  float realsense_height = 0.0;
+  /* -- member variables -- */
+  sensor_msgs::ImageConstPtr depth_image;
+  /* -- member functions --*/
+  void realSenseCB(const sensor_msgs::ImageConstPtr& ros_image);
+  bool convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image);
+  bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulation_pkg::DetectDepth::Response &res);
+};
+
+ThreeDimensionalPositionEstimator::ThreeDimensionalPositionEstimator() : nh("")
+{
+  realsense_subscriber = nh.subscribe("/camera/aligned_depth_to_color/image_raw", 1, &ThreeDimensionalPositionEstimator::realSenseCB, this);
+  estimate_server = nh.advertiseService("/detect/depth", &ThreeDimensionalPositionEstimator::getDepth, this);
+  nh.getParam("/mimi_specification/RealSense_Height", realsense_height);
+}
+
+void ThreeDimensionalPositionEstimator::realSenseCB(const sensor_msgs::ImageConstPtr& ros_image){
   depth_image = ros_image;
 }
 
-bool convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image){
+bool ThreeDimensionalPositionEstimator::convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image){
   cv_bridge::CvImagePtr cv_ptr;
   try{
 	// ros image msg -> cv_bridge -> cv::Mat
@@ -37,7 +64,7 @@ bool convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output
   return true;
 }
 
-bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulation_pkg::DetectDepth::Response &res){
+bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulation_pkg::DetectDepth::Response &res){
   geometry_msgs::Point object_point;
   cv::Mat cv_image;
   sensor_msgs::ImageConstPtr current_depth_image = depth_image;
@@ -68,25 +95,18 @@ bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulatio
   centroid_x = centroid_x * cos(M_PI*30/180) + centroid_z * sin(M_PI*30/180);
   centroid_z = centroid_z - distance*sin(M_PI*30/180);
 
-  /*
-  centroid_y = distance * sin(theta_y);
-  centroid_z = distance * sin(theta_z);
-  centroid_x = sqrt(pow(distance,2)-(pow(centroid_y,2)+pow(centroid_z,2)));
-  */
-  
   res.centroid_point.x = centroid_x / 1000;
   res.centroid_point.y = centroid_y / 1000;
-  res.centroid_point.z = centroid_z / 1000 + REALSENSE_HEIGHT;
+  res.centroid_point.z = centroid_z / 1000 + realsense_height;
   return true;  
 }
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "object_centroid_detector");
-  ros::NodeHandle n;
+  ros::init(argc, argv, "three_dimensional_position_estimator");
 
-  ros::Subscriber sub = n.subscribe("/camera/aligned_depth_to_color/image_raw", 1, realSenseCB);
-  ros::ServiceServer service = n.advertiseService("/detect/depth", getDepth);
-
+  ThreeDimensionalPositionEstimator three_dimensional_position_estimator;
+  
   ROS_INFO("Ready");
   ros::spin();
+  return 0;
 }

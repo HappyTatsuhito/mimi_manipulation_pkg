@@ -149,7 +149,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/mimi_manipulation_pkg_node.cpp)
-add_executable(object_centroid_detector src/object_centroid_detector.cpp)
+add_executable(three_dimensional_position_estimator src/three_dimensional_position_estimator.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -163,7 +163,7 @@ add_executable(object_centroid_detector src/object_centroid_detector.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
-  object_centroid_detector
+  three_dimensional_position_estimator
   ${catkin_LIBRARIES}
   ${OpenCV_INCLUDE_DIRS}
   )
