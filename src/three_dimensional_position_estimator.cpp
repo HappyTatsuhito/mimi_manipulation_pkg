@@ -98,6 +98,8 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
   res.centroid_point.x = centroid_x / 1000;
   res.centroid_point.y = centroid_y / 1000;
   res.centroid_point.z = centroid_z / 1000 + realsense_height;
+  ROS_INFO("x:%f, y:%f, z:%f", res.centroid_point.x, res.centroid_point.y, res.centroid_point.z);
+  
   return true;  
 }
 
