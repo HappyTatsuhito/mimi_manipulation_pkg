@@ -1,4 +1,4 @@
-# Manipulation Masterの使い方  
+# Manipulation Master Description  
 物体認識・把持を管理するマスター  
 Actionを通してobject_recognizerで物体認識、object_grasperで物体把持を行う  
   
