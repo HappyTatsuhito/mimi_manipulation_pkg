@@ -95,6 +95,10 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
   centroid_x = centroid_x * cos(M_PI*30/180) + centroid_z * sin(M_PI*30/180);
   centroid_z = centroid_z - distance*sin(M_PI*30/180);
 
+  //calibrate RealSenseCamera d435
+  //簡単にしか処理してないので注意
+  centroid_y += 50;
+  
   res.centroid_point.x = centroid_x / 1000;
   res.centroid_point.y = centroid_y / 1000;
   res.centroid_point.z = centroid_z / 1000 + realsense_height;

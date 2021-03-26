@@ -207,7 +207,6 @@ class RecognizeAction(object):
             if exist_flg:
                 object_centroid = self.recognize_tools.localizeObject(target_name, bb)
                 if not math.isnan(object_centroid.x):# 物体が正面になるように回転する処理
-                    object_centroid.y += 0.05 # calibrate RealSenseCamera d435
                     object_angle = math.atan2(object_centroid.y, object_centroid.x)/math.pi*180
                     if abs(object_angle) < 4.5:
                         # success
