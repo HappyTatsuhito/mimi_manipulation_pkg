@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*
 
 import rospy
+import rosparam
 import math
 import threading
 import time
@@ -49,19 +50,18 @@ class JointController(MotorController):
     def __init__(self):
         super(JointController,self).__init__()
         # ROS Topic Subscriber
-        rospy.Subscriber('/servo/shoulder',Float64,self.shoulderPub)
-        rospy.Subscriber('/servo/elbow',Float64,self.elbowPub)
-        rospy.Subscriber('/servo/wrist',Float64,self.wristPub)
-        rospy.Subscriber('/servo/endeffector',Bool,self.endeffectorPub)
-        rospy.Subscriber('/servo/head',Float64,self.headPub)
+        rospy.Subscriber('/servo/shoulder',Float64,self.controlShoulder)
+        rospy.Subscriber('/servo/elbow',Float64,self.controlElbow)
+        rospy.Subscriber('/servo/wrist',Float64,self.controlWrist)
+        rospy.Subscriber('/servo/endeffector',Bool,self.controlEndeffector)
+        rospy.Subscriber('/servo/head',Float64,self.controlHead)
 
-    def shoulderPub(self,rad):
+    def controlShoulder(self,rad):
         if type(rad) == type(Float64()):
             rad = rad.data
         step = self.radToStep(rad)
         step0 = 4095 - step + (self.origin_angle[0]-2048)
         step1 = step + (self.origin_angle[1]-2048)
-        print '0:', step0, ' 1:', step1
         thread_m0 = threading.Thread(target=self.callMotorService, args=(0, step0,))
         thread_m1 = threading.Thread(target=self.callMotorService, args=(1, step1,))
         thread_m1.start()
@@ -76,12 +76,11 @@ class JointController(MotorController):
             thread_m0.start()
             thread_m1.start()
 
-    def elbowPub(self,rad):
+    def controlElbow(self,rad):
         if type(rad) == type(Float64()):
             rad = rad.data
         rad *= -1
         step = self.radToStep(rad) + (self.origin_angle[2]-2048)
-        print '2: ', step
         self.callMotorService(2, step)
         rospy.sleep(0.2)
         while self.rotation_velocity[2] > 0 and not rospy.is_shutdown():
@@ -90,11 +89,10 @@ class JointController(MotorController):
         if abs(self.torque_error[2]) > 100:
             self.callMotorService(2, self.current_pose[2])
 
-    def wristPub(self,rad):
+    def controlWrist(self,rad):
         if type(rad) == type(Float64()):
             rad = rad.data
         step = self.radToStep(rad) + (self.origin_angle[3]-2048)
-        print '3: ', step
         self.callMotorService(3, step)
         rospy.sleep(0.2)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
@@ -103,7 +101,10 @@ class JointController(MotorController):
         if abs(self.torque_error[3]) > 100:
             self.callMotorService(3, self.current_pose[3])
 
-    def endeffectorPub(self,req):
+    def controlEndeffector(self,req):
+        if not req:
+            self.callMotorService(4, origin_angle[4])
+            return True
         angle = self.origin_angle[4]
         self.callMotorService(4, angle)
         while self.rotation_velocity[4] > 0 and not rospy.is_shutdown():
@@ -112,8 +113,6 @@ class JointController(MotorController):
         grasp_flg = True
         while abs(self.torque_error[4]) <= 50 and not rospy.is_shutdown():
             angle -= 10
-            self.callMotorService(4, angle)
-            #rospy.sleep(0.06)
             while self.rotation_velocity[4] > 15.0 and not rospy.is_shutdown():
                 pass
             if angle < 2900:
@@ -121,14 +120,12 @@ class JointController(MotorController):
                 break;
         rospy.sleep(0.1)
         self.callMotorService(4, self.current_pose[4]-80)
-        print 'fin'
         return grasp_flg
 
-    def headPub(self,rad):
+    def controlHead(self,rad):
         if type(rad) == type(Float64()):
             rad = rad.data
         step = self.radToStep(rad) + (self.origin_angle[5]-2048)
-        print '5: ', step
         self.callMotorService(5, step)
     
     
@@ -137,12 +134,13 @@ class ArmPoseChanger(JointController):
         super(ArmPoseChanger,self).__init__()
         # ROS Topic Subscriber
         arm_changer = rospy.Service('/servo/arm', ManipulateSrv, self.changeArmPose)
+        self.arm_specification = rosparam.get_param('/mimi_specification')
 
     def inverseKinematics(self, x, y):
-        l0 = 0.78# Height from ground to shoulder(metre)
-        l1 = 0.22# Length from shoulder to elbow(metre)
-        l2 = 0.17# Length from elbow to wrist(metre)
-        l3 = 0.15# Length of end effector(metre)
+        l0 = self.arm_specification['Arm_Height']
+        l1 = self.arm_specification['Shoulder_Elbow_Length']
+        l2 = self.arm_specification['Elbow_Wrist_Length']
+        l3 = self.arm_specification['Endeffector_Length']
         x -= l3
         y -= l0
         data1 =  x*x+y*y+l1*l1-l2*l2
@@ -153,16 +151,17 @@ class ArmPoseChanger(JointController):
             wrist_angle = -1*(shoulder_angle + elbow_angle)
             shoulder_angle *= 2.1
             elbow_angle *= 2.1
+            #2.1:ギア比
             #self.armCotnroller(shoulder_angle, elbow_angle, wrist_angle)
             return [shoulder_angle, elbow_angle, wrist_angle]
         except ValueError:
             rospy.loginfo('I can not move arm.')
-            return False
+            return [numpy.nan]*3
         
     def armController(self, shoulder_param, elbow_param, wrist_param):
-        thread_shoulder = threading.Thread(target=self.shoulderPub, args=(shoulder_param,))
-        thread_elbow = threading.Thread(target=self.elbowPub, args=(elbow_param,))
-        thread_wrist = threading.Thread(target=self.wristPub, args=(wrist_param,))
+        thread_shoulder = threading.Thread(target=self.controlShoulder, args=(shoulder_param,))
+        thread_elbow = threading.Thread(target=self.controlElbow, args=(elbow_param,))
+        thread_wrist = threading.Thread(target=self.controlWrist, args=(wrist_param,))
         thread_wrist.start()
         rospy.sleep(0.5)
         thread_elbow.start()

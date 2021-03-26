@@ -67,7 +67,7 @@ class CallDetector(object):
         self.object_centroid = Point()
         
     def detectorService(self, center_x, center_y):
-        rospy.wait_for_service("/detect/depth")
+        rospy.wait_for_service('/detect/depth')
         res = self.detect_depth(center_x, center_y)
         self.object_centroid = res.centroid_point
         rospy.loginfo(self.object_centroid)
@@ -106,7 +106,7 @@ class RecognizeTools(object):
             rate.sleep()
 
     def findObject(self, object_name='None'):
-        rospy.loginfo("module type : Find")
+        rospy.loginfo('module type : Find')
         mimi_control = MimiControl()
         if type(object_name) != str:
             object_name = object_name.target_name
@@ -127,7 +127,7 @@ class RecognizeTools(object):
         return find_flg
             
     def countObject(self, object_name='None', bb=None):
-        rospy.loginfo("module type : Count")
+        rospy.loginfo('module type : Count')
         if bb is None:
             bb = self.bbox
         if type(object_name) != str:
@@ -149,7 +149,7 @@ class RecognizeTools(object):
         return object_count, object_list
 
     def localizeObject(self, object_name, bb=None):
-        rospy.loginfo("module type : Localize")
+        rospy.loginfo('module type : Localize')
         Detector = CallDetector()
         if bb is None:
             bb = self.bbox

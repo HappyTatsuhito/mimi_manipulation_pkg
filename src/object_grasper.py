@@ -43,7 +43,7 @@ class ObjectGrasper(ArmPoseChanger):
         #x = (y-0.78)/10+0.5
         x = 0.5
         joint_angle = self.inverseKinematics(x, y)
-        if not joint_angle:
+        if numpy.nun in joint_angle:
             return
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.0)
@@ -55,7 +55,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.callMotorService(4, self.origin_angle[4])
         rospy.sleep(0.5)
         self.moveBase(-0.3)
-        self.shoulderPub(joint_angle[0]+0.1)
+        self.controlShoulder(joint_angle[0]+0.1)
         self.moveBase(-0.9)
         self.changeArmPose('carry')
         self.navigation_place = 'Null'
@@ -99,17 +99,18 @@ class ObjectGrasper(ArmPoseChanger):
         #x = (y-0.75)/10+0.5
         x = 0.475
         joint_angle = self.inverseKinematics(x, y)
-        if not joint_angle:
+        if numpy.nun in joint_angle:
             return False
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.5)
-        move_range = 0.5 + (object_centroid.x + 0.05 - x)*3.3 # 0.5:後退量, 0.05:realsenseからshoulderまでのx軸の距離
+        move_range = 0.5 + (object_centroid.x + 0.05 - x)*3.3
+        # 0.5:後退量, 0.05:realsenseからshoulderまでのx軸の距離, 3.3:moveBaseの数値に変換(おおよそ)
         self.moveBase(move_range*0.7)
         rospy.sleep(0.3)
         self.moveBase(move_range*0.4)
-        grasp_flg = self.endeffectorPub(True)
+        grasp_flg = self.controlEndeffector(True)
         rospy.sleep(1.0)
-        self.shoulderPub(joint_angle[0]+0.1)
+        self.controlShoulder(joint_angle[0]+0.1)
         self.moveBase(-0.9)
         self.changeArmPose('carry')
         rospy.sleep(4.0)
@@ -133,9 +134,9 @@ class ObjectGrasper(ArmPoseChanger):
                 self.navigation_place = 'Null'
 
     def startUp(self):
-        self.callMotorService(4, grasper.origin_angle[4])
+        _ = self.controlEndeffector(False)
         self.changeArmPose('carry')
-        self.headPub(0.0)
+        self.controlHead(0.0)
 
 
     def actionPreempt(self):
