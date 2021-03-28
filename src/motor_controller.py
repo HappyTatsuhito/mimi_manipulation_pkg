@@ -23,7 +23,7 @@ class MotorController(object):
         # ROS Service Client
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
-        self.origin_angle = [1975, 2165, 1727, 2048, 3500, 1800]
+        self.origin_angle = rosparam.get_param('/mimi_specification/Origin_Angle')
         self.current_pose = [0]*5
         self.torque_error = [0]*5
         self.rotation_velocity = [0]*5
@@ -36,14 +36,22 @@ class MotorController(object):
 
     def callMotorService(self, motor_id, rotate_value):
         if type(rotate_value) == type(float()):
-            rotate_value = self.radToStep(rotate_value)
+            rotate_value = self.degToStep(rotate_value)
         res = self.motor_client('', motor_id, 'Goal_Position', rotate_value)
 
+    def degToStep(self,deg):
+        return int((deg+180)/360.0*4095)
+
+    def stepToDeg(self,step):
+        return round(step/4095.0*360.0-180)
+
+    '''
     def radToStep(self,rad):
         return int((rad + math.pi) / (2*math.pi) * 4095)
 
     def stepToRad(self,step):
         return step / 4095.0 * 2*math.pi - math.pi
+    '''
     
 
 class JointController(MotorController):
@@ -56,10 +64,10 @@ class JointController(MotorController):
         rospy.Subscriber('/servo/endeffector',Bool,self.controlEndeffector)
         rospy.Subscriber('/servo/head',Float64,self.controlHead)
 
-    def controlShoulder(self,rad):
-        if type(rad) == type(Float64()):
-            rad = rad.data
-        step = self.radToStep(rad)
+    def controlShoulder(self,deg):
+        if type(deg) == type(Float64()):
+            deg = deg.data
+        step = self.degToStep(deg)
         step0 = 4095 - step + (self.origin_angle[0]-2048)
         step1 = step + (self.origin_angle[1]-2048)
         thread_m0 = threading.Thread(target=self.callMotorService, args=(0, step0,))
@@ -76,11 +84,11 @@ class JointController(MotorController):
             thread_m0.start()
             thread_m1.start()
 
-    def controlElbow(self,rad):
-        if type(rad) == type(Float64()):
-            rad = rad.data
-        rad *= -1
-        step = self.radToStep(rad) + (self.origin_angle[2]-2048)
+    def controlElbow(self,deg):
+        if type(deg) == type(Float64()):
+            deg = deg.data
+        deg *= -1
+        step = self.degToStep(deg) + (self.origin_angle[2]-2048)
         self.callMotorService(2, step)
         rospy.sleep(0.2)
         while self.rotation_velocity[2] > 0 and not rospy.is_shutdown():
@@ -89,10 +97,10 @@ class JointController(MotorController):
         if abs(self.torque_error[2]) > 100:
             self.callMotorService(2, self.current_pose[2])
 
-    def controlWrist(self,rad):
-        if type(rad) == type(Float64()):
-            rad = rad.data
-        step = self.radToStep(rad) + (self.origin_angle[3]-2048)
+    def controlWrist(self,deg):
+        if type(deg) == type(Float64()):
+            deg = deg.data
+        step = self.degToStep(deg) + (self.origin_angle[3]-2048)
         self.callMotorService(3, step)
         rospy.sleep(0.2)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
@@ -122,10 +130,10 @@ class JointController(MotorController):
         self.callMotorService(4, self.current_pose[4]-80)
         return grasp_flg
 
-    def controlHead(self,rad):
-        if type(rad) == type(Float64()):
-            rad = rad.data
-        step = self.radToStep(rad) + (self.origin_angle[5]-2048)
+    def controlHead(self,deg):
+        if type(deg) == type(Float64()):
+            deg = deg.data
+        step = self.degToStep(deg) + (self.origin_angle[5]-2048)
         self.callMotorService(5, step)
     
     
