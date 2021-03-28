@@ -20,6 +20,7 @@ class MotorController(object):
         rospy.Subscriber('/dynamixel_workbench/dynamixel_state',DynamixelStateList,self.getMotorStateCB)
         # ROS Topic Publisher
         self.motor_pub = rospy.Publisher('/dynamixel_workbench/joint_trajectory',JointTrajectory,queue_size=10)
+        self.motor_angle_pub = rospy.Publisher('/servo/angle_list',Int64MultiArray,queue_size=10)
         # ROS Service Client
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
@@ -33,6 +34,11 @@ class MotorController(object):
             self.current_pose[i] = state.dynamixel_state[i].present_position
             self.rotation_velocity[i] = abs(state.dynamixel_state[i].present_velocity)
             self.torque_error[i] = state.dynamixel_state[i].present_current
+        deg_origin_angle = map(stepToDeg, self.origin_angle)
+        deg_current_pose = map(stepToDeg, current_pose)
+        current_deg_list = [x-y for (x,y) in zip(deg_current_pose, deg_origin_angle)]
+        self.motor_angle_pub.publish(current_deg_list)
+        
 
     def callMotorService(self, motor_id, rotate_value):
         if type(rotate_value) == type(float()):
@@ -225,7 +231,7 @@ class ArmPoseChanger(JointController):
 
     def placeMode(self):
         #現時点では家具の高さを予めプログラムに打ち込む必要があり、
-        #その情報をobject_grasperに格納しているのでそちらでplaceの関数を再構築しています。
+        #その情報をobject_grasperに格納しているのでそちらでplaceの関数をオーバーライドしています。
         pass
 
         
