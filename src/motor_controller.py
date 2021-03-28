@@ -7,7 +7,7 @@ import math
 import threading
 import time
 # ros msgs
-from std_msgs.msg import Bool,Float64
+from std_msgs.msg import Bool, Int64, Int64MultiArray
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from dynamixel_workbench_msgs.msg import DynamixelStateList
 # ros srvs
@@ -25,19 +25,22 @@ class MotorController(object):
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
         self.origin_angle = rosparam.get_param('/mimi_specification/Origin_Angle')
-        self.current_pose = [0]*5
-        self.torque_error = [0]*5
-        self.rotation_velocity = [0]*5
+        self.current_pose = [0]*6
+        self.torque_error = [0]*6
+        self.rotation_velocity = [0]*6
         
     def getMotorStateCB(self, state):
-        for i in range(5):
+        for i in range(6):
             self.current_pose[i] = state.dynamixel_state[i].present_position
             self.rotation_velocity[i] = abs(state.dynamixel_state[i].present_velocity)
             self.torque_error[i] = state.dynamixel_state[i].present_current
-        deg_origin_angle = map(stepToDeg, self.origin_angle)
-        deg_current_pose = map(stepToDeg, current_pose)
+        deg_origin_angle = map(self.stepToDeg, self.origin_angle)
+        deg_current_pose = map(self.stepToDeg, self.current_pose)
         current_deg_list = [x-y for (x,y) in zip(deg_current_pose, deg_origin_angle)]
-        self.motor_angle_pub.publish(current_deg_list)
+        current_deg_list = map(int, current_deg_list)
+        pub_deg_list = Int64MultiArray(data=current_deg_list)
+        rospy.loginfo(pub_deg_list.data)
+        self.motor_angle_pub.publish(pub_deg_list)
         
 
     def callMotorService(self, motor_id, rotate_value):
@@ -64,14 +67,14 @@ class JointController(MotorController):
     def __init__(self):
         super(JointController,self).__init__()
         # ROS Topic Subscriber
-        rospy.Subscriber('/servo/shoulder',Float64,self.controlShoulder)
-        rospy.Subscriber('/servo/elbow',Float64,self.controlElbow)
-        rospy.Subscriber('/servo/wrist',Float64,self.controlWrist)
+        rospy.Subscriber('/servo/shoulder',Int64,self.controlShoulder)
+        rospy.Subscriber('/servo/elbow',Int64,self.controlElbow)
+        rospy.Subscriber('/servo/wrist',Int64,self.controlWrist)
         rospy.Subscriber('/servo/endeffector',Bool,self.controlEndeffector)
-        rospy.Subscriber('/servo/head',Float64,self.controlHead)
+        rospy.Subscriber('/servo/head',Int64,self.controlHead)
 
     def controlShoulder(self,deg):
-        if type(deg) == type(Float64()):
+        if type(deg) == type(Int64()):
             deg = deg.data
         step = self.degToStep(deg)
         step0 = 4095 - step + (self.origin_angle[0]-2048)
@@ -91,7 +94,7 @@ class JointController(MotorController):
             thread_m1.start()
 
     def controlElbow(self,deg):
-        if type(deg) == type(Float64()):
+        if type(deg) == type(Int64()):
             deg = deg.data
         deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[2]-2048)
@@ -104,7 +107,7 @@ class JointController(MotorController):
             self.callMotorService(2, self.current_pose[2])
 
     def controlWrist(self,deg):
-        if type(deg) == type(Float64()):
+        if type(deg) == type(Int64()):
             deg = deg.data
         step = self.degToStep(deg) + (self.origin_angle[3]-2048)
         self.callMotorService(3, step)
@@ -116,8 +119,11 @@ class JointController(MotorController):
             self.callMotorService(3, self.current_pose[3])
 
     def controlEndeffector(self,req):
+        if type(req) == type(Bool()):
+            req = req.data
         if not req:
-            self.callMotorService(4, origin_angle[4])
+            self.callMotorService(4, self.origin_angle[4])
+            rospy.loginfo("ok")
             return True
         angle = self.origin_angle[4]
         self.callMotorService(4, angle)
@@ -137,7 +143,7 @@ class JointController(MotorController):
         return grasp_flg
 
     def controlHead(self,deg):
-        if type(deg) == type(Float64()):
+        if type(deg) == type(Int64()):
             deg = deg.data
         step = self.degToStep(deg) + (self.origin_angle[5]-2048)
         self.callMotorService(5, step)
