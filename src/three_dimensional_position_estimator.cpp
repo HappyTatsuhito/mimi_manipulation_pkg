@@ -5,6 +5,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <image_transport/image_transport.h>
+// ros msgs
+#include <std_msgs/Int64MultiArray.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
 #include <geometry_msgs/Point.h>
@@ -21,14 +23,17 @@ private:
   ros::NodeHandle nh;
   /* -- topic -- */
   ros::Subscriber realsense_subscriber;
+  ros::Subscriber motor_angle_subscriber;
   /* -- service -- */
   ros::ServiceServer estimate_server;
   /* -- param -- */
   float realsense_height = 0.0;
   /* -- member variables -- */
   sensor_msgs::ImageConstPtr depth_image;
+  int head_angle = 0;
   /* -- member functions --*/
   void realSenseCB(const sensor_msgs::ImageConstPtr& ros_image);
+  void motorAngleCB(std_msgs::Int64MultiArray angle_res);
   bool convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image);
   bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulation_pkg::DetectDepth::Response &res);
 };
@@ -36,12 +41,18 @@ private:
 ThreeDimensionalPositionEstimator::ThreeDimensionalPositionEstimator() : nh("")
 {
   realsense_subscriber = nh.subscribe("/camera/aligned_depth_to_color/image_raw", 1, &ThreeDimensionalPositionEstimator::realSenseCB, this);
+  motor_angle_subscriber = nh.subscribe("/servo/angle_list", 1, &ThreeDimensionalPositionEstimator::motorAngleCB, this);
   estimate_server = nh.advertiseService("/detect/depth", &ThreeDimensionalPositionEstimator::getDepth, this);
   nh.getParam("/mimi_specification/RealSense_Height", realsense_height);
 }
 
 void ThreeDimensionalPositionEstimator::realSenseCB(const sensor_msgs::ImageConstPtr& ros_image){
   depth_image = ros_image;
+}
+
+void ThreeDimensionalPositionEstimator::motorAngleCB(std_msgs::Int64MultiArray angle_list){
+  head_angle = angle_list.data[5];
+  ROS_INFO("%d", head_angle);
 }
 
 bool ThreeDimensionalPositionEstimator::convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image){
@@ -90,10 +101,12 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
   centroid_x = distance;
   centroid_y = -1 * distance * tan(theta_y);
   centroid_z = distance * tan(theta_z);
+  ROS_INFO("%f, %f", centroid_x, centroid_z);
   
-  //角度：30
-  centroid_x = centroid_x * cos(M_PI*30/180) + centroid_z * sin(M_PI*30/180);
-  centroid_z = centroid_z - distance*sin(M_PI*30/180);
+  //角度：head_angleに合わせて調整
+  centroid_x = centroid_x * cos(M_PI*head_angle/180) + centroid_z * sin(M_PI*head_angle/180);
+  centroid_z = centroid_z - distance*sin(M_PI*head_angle/180);
+  ROS_INFO("%f, %f", centroid_x, centroid_z);
 
   //calibrate RealSenseCamera d435
   //簡単にしか処理してないので注意
