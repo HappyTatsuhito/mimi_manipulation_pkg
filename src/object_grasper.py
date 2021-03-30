@@ -7,7 +7,7 @@ import math
 import threading
 import actionlib
 # -- ros msgs --
-from std_msgs.msg import Bool,Float64,String
+from std_msgs.msg import Bool, Int64, String
 from dynamixel_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
@@ -136,7 +136,7 @@ class ObjectGrasper(ArmPoseChanger):
     def startUp(self):
         _ = self.controlEndeffector(False)
         self.changeArmPose('carry')
-        self.controlHead(0.0)
+        self.controlHead(0)
 
 
     def actionPreempt(self):
