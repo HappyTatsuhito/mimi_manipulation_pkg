@@ -145,6 +145,7 @@ class JointController(MotorController):
     def controlHead(self,deg):
         if type(deg) == type(Int64()):
             deg = deg.data
+        deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[5]-2048)
         self.callMotorService(5, step)
     

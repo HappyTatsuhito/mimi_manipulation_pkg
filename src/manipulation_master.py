@@ -5,7 +5,7 @@ import rospy
 import actionlib
 from enum import Enum
 # -- ros msgs --
-from std_msgs.msg import String, Float64
+from std_msgs.msg import String, Int64
 # -- ros srvs --
 from mimi_manipulation_pkg.srv import ManipulateSrv
 # -- action msgs --
@@ -78,9 +78,9 @@ class GrasperAction(object):
         return result.grasp_result
 
 def actionMain(req):
-    head_pub = rospy.Publisher('/servo/head',Float64,queue_size=1)
+    head_pub = rospy.Publisher('/servo/head',Int64,queue_size=1)
     rospy.sleep(0.2)
-    head_pub.publish(-0.4363)
+    head_pub.publish(30)
     rospy.sleep(2.0)
     recognize_flg = True
     grasp_flg = False
