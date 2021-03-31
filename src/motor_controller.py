@@ -7,7 +7,7 @@ import math
 import threading
 import time
 # ros msgs
-from std_msgs.msg import Bool, Int64, Int64MultiArray
+from std_msgs.msg import Bool, Float64, Float64MultiArray
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from dynamixel_workbench_msgs.msg import DynamixelStateList
 # ros srvs
@@ -20,7 +20,7 @@ class MotorController(object):
         rospy.Subscriber('/dynamixel_workbench/dynamixel_state',DynamixelStateList,self.getMotorStateCB)
         # ROS Topic Publisher
         self.motor_pub = rospy.Publisher('/dynamixel_workbench/joint_trajectory',JointTrajectory,queue_size=10)
-        self.motor_angle_pub = rospy.Publisher('/servo/angle_list',Int64MultiArray,queue_size=10)
+        self.motor_angle_pub = rospy.Publisher('/servo/angle_list',Float64MultiArray,queue_size=10)
         # ROS Service Client
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
@@ -38,7 +38,7 @@ class MotorController(object):
         deg_current_pose = map(self.stepToDeg, self.current_pose)
         current_deg_list = [x-y for (x,y) in zip(deg_current_pose, deg_origin_angle)]
         current_deg_list = map(int, current_deg_list)
-        pub_deg_list = Int64MultiArray(data=current_deg_list)
+        pub_deg_list = Float64MultiArray(data=current_deg_list)
         rospy.loginfo(pub_deg_list.data)
         self.motor_angle_pub.publish(pub_deg_list)
         
@@ -52,7 +52,7 @@ class MotorController(object):
         return int((deg+180)/360.0*4095)
 
     def stepToDeg(self,step):
-        return round(step/4095.0*360.0-180)
+        return round(step/4095.0*360.0-180, 1)
 
     '''
     def radToStep(self,rad):
@@ -67,14 +67,14 @@ class JointController(MotorController):
     def __init__(self):
         super(JointController,self).__init__()
         # ROS Topic Subscriber
-        rospy.Subscriber('/servo/shoulder',Int64,self.controlShoulder)
-        rospy.Subscriber('/servo/elbow',Int64,self.controlElbow)
-        rospy.Subscriber('/servo/wrist',Int64,self.controlWrist)
+        rospy.Subscriber('/servo/shoulder',Float64,self.controlShoulder)
+        rospy.Subscriber('/servo/elbow',Float64,self.controlElbow)
+        rospy.Subscriber('/servo/wrist',Float64,self.controlWrist)
         rospy.Subscriber('/servo/endeffector',Bool,self.controlEndeffector)
-        rospy.Subscriber('/servo/head',Int64,self.controlHead)
+        rospy.Subscriber('/servo/head',Float64,self.controlHead)
 
     def controlShoulder(self,deg):
-        if type(deg) == type(Int64()):
+        if type(deg) == type(Float64()):
             deg = deg.data
         step = self.degToStep(deg)
         step0 = 4095 - step + (self.origin_angle[0]-2048)
@@ -94,7 +94,7 @@ class JointController(MotorController):
             thread_m1.start()
 
     def controlElbow(self,deg):
-        if type(deg) == type(Int64()):
+        if type(deg) == type(Float64()):
             deg = deg.data
         deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[2]-2048)
@@ -107,7 +107,7 @@ class JointController(MotorController):
             self.callMotorService(2, self.current_pose[2])
 
     def controlWrist(self,deg):
-        if type(deg) == type(Int64()):
+        if type(deg) == type(Float64()):
             deg = deg.data
         step = self.degToStep(deg) + (self.origin_angle[3]-2048)
         self.callMotorService(3, step)
@@ -143,7 +143,7 @@ class JointController(MotorController):
         return grasp_flg
 
     def controlHead(self,deg):
-        if type(deg) == type(Int64()):
+        if type(deg) == type(Float64()):
             deg = deg.data
         deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[5]-2048)

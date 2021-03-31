@@ -6,7 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <image_transport/image_transport.h>
 // ros msgs
-#include <std_msgs/Int64MultiArray.h>
+#include <std_msgs/Float64MultiArray.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
 #include <geometry_msgs/Point.h>
@@ -33,7 +33,7 @@ private:
   int head_angle = 0;
   /* -- member functions --*/
   void realSenseCB(const sensor_msgs::ImageConstPtr& ros_image);
-  void motorAngleCB(std_msgs::Int64MultiArray angle_res);
+  void motorAngleCB(std_msgs::Float64MultiArray angle_res);
   bool convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image);
   bool getDepth(mimi_manipulation_pkg::DetectDepth::Request &req, mimi_manipulation_pkg::DetectDepth::Response &res);
 };
@@ -50,9 +50,9 @@ void ThreeDimensionalPositionEstimator::realSenseCB(const sensor_msgs::ImageCons
   depth_image = ros_image;
 }
 
-void ThreeDimensionalPositionEstimator::motorAngleCB(std_msgs::Int64MultiArray angle_list){
+void ThreeDimensionalPositionEstimator::motorAngleCB(std_msgs::Float64MultiArray angle_list){
   head_angle = angle_list.data[5];
-  ROS_INFO("%d", head_angle);
+  ROS_INFO("%f", head_angle);
 }
 
 bool ThreeDimensionalPositionEstimator::convertImage(const sensor_msgs::ImageConstPtr& input_image, cv::Mat &output_image){
