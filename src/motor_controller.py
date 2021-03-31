@@ -173,8 +173,9 @@ class ArmPoseChanger(JointController):
             shoulder_angle *= 2.1
             elbow_angle *= 2.1
             #2.1:ギア比
-            #self.armCotnroller(shoulder_angle, elbow_angle, wrist_angle)
-            return [shoulder_angle, elbow_angle, wrist_angle]
+            angle_list = [shoulder_angle, elbow_angle, wrist_angle]
+            anglelist = map(stepToDeg, angle_list)
+            return angle_list
         except ValueError:
             rospy.loginfo('I can not move arm.')
             return [numpy.nan]*3
@@ -210,21 +211,21 @@ class ArmPoseChanger(JointController):
             return False
 
     def originMode(self):
-        shoulder_param = 0.0
-        elbow_param = 0.0
-        wrist_param = 0.0
+        shoulder_param = 0
+        elbow_param = 0
+        wrist_param = 0
         self.armController(shoulder_param, elbow_param, wrist_param)
         
     def carryMode(self):
-        shoulder_param = -3.0
-        elbow_param = 2.5
-        wrist_param = 1.5
+        shoulder_param = -170
+        elbow_param = 145
+        wrist_param = 85
         self.armController(shoulder_param, elbow_param, wrist_param)
 
     def giveMode(self):
-        shoulder_param = -1.2
-        elbow_param = 2.6
-        wrist_param = -0.6
+        shoulder_param = -70
+        elbow_param = 150
+        wrist_param = -35
         self.armController(shoulder_param, elbow_param, wrist_param)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
             pass
