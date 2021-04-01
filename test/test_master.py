@@ -12,9 +12,9 @@ if __name__ == '__main__':
     
     rospy.init_node('test_master')
 
-    manipulation_master = rospy.ServiceProxy("/manipulation", ManipulateSrv)
+    manipulation_master = rospy.ServiceProxy('/manipulation', ManipulateSrv)
 
-    rospy.wait_for_service("/manipulation")
+    rospy.wait_for_service('/manipulation')
     res = manipulation_master(target_name)
-    rospy.loginfo("manipulation_master")
+    rospy.loginfo('manipulation_master')
     rospy.loginfo(res.result)
