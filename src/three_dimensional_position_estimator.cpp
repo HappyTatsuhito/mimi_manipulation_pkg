@@ -104,7 +104,7 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
   
   //角度：head_angleに合わせて調整
   centroid_x = centroid_x * cos(M_PI*head_angle/180) + centroid_z * sin(M_PI*head_angle/180);
-  centroid_z = centroid_z - distance*sin(M_PI*head_angle/180);
+  centroid_z = centroid_z * cos(M_PI*head_angle/180) - distance * sin(M_PI*head_angle/180);
   ROS_INFO("%f, %f", centroid_x, centroid_z);
 
   //calibrate RealSenseCamera d435
