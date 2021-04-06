@@ -27,7 +27,7 @@ private:
   /* -- service -- */
   ros::ServiceServer estimate_server;
   /* -- param -- */
-  float realsense_height = 0.0;
+  float neck_height = 0.0;
   /* -- member variables -- */
   sensor_msgs::ImageConstPtr depth_image;
   int head_angle = 0;
@@ -43,7 +43,7 @@ ThreeDimensionalPositionEstimator::ThreeDimensionalPositionEstimator() : nh("")
   realsense_subscriber = nh.subscribe("/camera/aligned_depth_to_color/image_raw", 1, &ThreeDimensionalPositionEstimator::realSenseCB, this);
   motor_angle_subscriber = nh.subscribe("/servo/angle_list", 1, &ThreeDimensionalPositionEstimator::motorAngleCB, this);
   estimate_server = nh.advertiseService("/detect/depth", &ThreeDimensionalPositionEstimator::getDepth, this);
-  nh.getParam("/mimi_specification/RealSense_Height", realsense_height);
+  nh.getParam("/mimi_specification/Ground_Neck_Height", neck_height);
 }
 
 void ThreeDimensionalPositionEstimator::realSenseCB(const sensor_msgs::ImageConstPtr& ros_image){
@@ -110,6 +110,11 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
   //calibrate RealSenseCamera d435
   //簡単にしか処理してないので注意
   centroid_y += 50;
+
+  //RealSenseの高さ調整
+  float theta = 90-(38.46+head_angle);
+  float head_height = 13.67*sin(theta*M_PI/180);
+  float realsense_height = neck_height + head_height;
   
   res.centroid_point.x = centroid_x / 1000;
   res.centroid_point.y = centroid_y / 1000;

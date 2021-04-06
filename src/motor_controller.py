@@ -57,9 +57,6 @@ class MotorController(object):
     def stepToDeg(self,step):
         return round(step/4095.0*360.0-180, 1)
 
-    def radToDeg(self,rad):
-        return rad/math.pi*180
-    
     '''
     def radToStep(self,rad):
         return int((rad + math.pi) / (2*math.pi) * 4095)
@@ -167,10 +164,10 @@ class ArmPoseChanger(JointController):
         self.arm_specification = rosparam.get_param('/mimi_specification')
 
     def inverseKinematics(self, x, y):
-        l0 = self.arm_specification['Arm_Height']
+        l0 = self.arm_specification['Ground_Arm_Height']
         l1 = self.arm_specification['Shoulder_Elbow_Length']
         l2 = self.arm_specification['Elbow_Wrist_Length']
-        l3 = self.arm_specification['Endeffector_Length']
+        l3 = self.arm_specification['Wrist_Endeffector_Length']
         x -= l3
         y -= l0
         rospy.loginfo(x)
@@ -184,7 +181,7 @@ class ArmPoseChanger(JointController):
             elbow_angle *= 2.1
             #2.1:ギア比
             angle_list = [shoulder_angle, elbow_angle, wrist_angle]
-            angle_list = map(self.radToDeg, angle_list)
+            angle_list = map(math.degrees, angle_list)
             rospy.loginfo(angle_list)
             return angle_list
         except ValueError:
