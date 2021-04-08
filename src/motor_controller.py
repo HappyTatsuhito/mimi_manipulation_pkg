@@ -26,6 +26,7 @@ class MotorController(object):
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
         # Motor Parameters
         self.origin_angle = rosparam.get_param('/mimi_specification/Origin_Angle')
+        self.gear_ratio = rosparam.get_param('/mimi_specification/Gear_Ratio')
         self.current_pose = [0]*6
         self.torque_error = [0]*6
         self.rotation_velocity = [0]*6
@@ -79,7 +80,7 @@ class JointController(MotorController):
     def controlShoulder(self,deg):
         if type(deg) == type(Float64()):
             deg = deg.data
-        deg *= 2.1
+        deg *= self.gear_ratio[0]
         step = self.degToStep(deg)
         step0 = 4095 - step + (self.origin_angle[0]-2048)
         step1 = step + (self.origin_angle[1]-2048)
@@ -100,7 +101,7 @@ class JointController(MotorController):
     def controlElbow(self,deg):
         if type(deg) == type(Float64()):
             deg = deg.data
-        deg *= 2.1
+        deg *= self.gear_ratio[2]
         deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[2]-2048)
         self.callMotorService(2, step)
@@ -114,6 +115,7 @@ class JointController(MotorController):
     def controlWrist(self,deg):
         if type(deg) == type(Float64()):
             deg = deg.data
+        deg *= self.gear_ratio[3]
         step = self.degToStep(deg) + (self.origin_angle[3]-2048)
         self.callMotorService(3, step)
         rospy.sleep(0.2)
@@ -131,12 +133,6 @@ class JointController(MotorController):
             rospy.loginfo("ok")
             return True
         angle = self.origin_angle[4]
-        '''
-        self.callMotorService(4, angle)
-        while self.rotation_velocity[4] > 0 and not rospy.is_shutdown():
-            pass
-        rospy.sleep(0.5)
-        '''
         grasp_flg = True
         while abs(self.torque_error[4]) <= 50 and not rospy.is_shutdown():
             angle -= 10
@@ -153,6 +149,7 @@ class JointController(MotorController):
     def controlHead(self,deg):
         if type(deg) == type(Float64()):
             deg = deg.data
+        deg *= self.gear_ratio[5]
         deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[5]-2048)
         self.callMotorService(5, step)
