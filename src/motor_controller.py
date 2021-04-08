@@ -79,6 +79,7 @@ class JointController(MotorController):
     def controlShoulder(self,deg):
         if type(deg) == type(Float64()):
             deg = deg.data
+        deg *= 2.1
         step = self.degToStep(deg)
         step0 = 4095 - step + (self.origin_angle[0]-2048)
         step1 = step + (self.origin_angle[1]-2048)
@@ -99,6 +100,7 @@ class JointController(MotorController):
     def controlElbow(self,deg):
         if type(deg) == type(Float64()):
             deg = deg.data
+        deg *= 2.1
         deg *= -1
         step = self.degToStep(deg) + (self.origin_angle[2]-2048)
         self.callMotorService(2, step)
@@ -177,9 +179,6 @@ class ArmPoseChanger(JointController):
             shoulder_angle = -1*math.acos((x*x+y*y+l1*l1-l2*l2) / (2*l1*math.sqrt(x*x+y*y))) + math.atan(y/x)# -1倍の有無で別解
             elbow_angle = math.atan((y-l1*math.sin(shoulder_angle))/(x-l1*math.cos(shoulder_angle)))-shoulder_angle
             wrist_angle = -1*(shoulder_angle + elbow_angle)
-            shoulder_angle *= 2.1
-            elbow_angle *= 2.1
-            #2.1:ギア比
             angle_list = [shoulder_angle, elbow_angle, wrist_angle]
             angle_list = map(math.degrees, angle_list)
             rospy.loginfo(angle_list)
@@ -225,14 +224,14 @@ class ArmPoseChanger(JointController):
         self.armController(shoulder_param, elbow_param, wrist_param)
         
     def carryMode(self):
-        shoulder_param = -170
-        elbow_param = 145
+        shoulder_param = -85
+        elbow_param = 75
         wrist_param = 85
         self.armController(shoulder_param, elbow_param, wrist_param)
 
     def giveMode(self):
-        shoulder_param = -70
-        elbow_param = 150
+        shoulder_param = -35
+        elbow_param = 75
         wrist_param = -35
         self.armController(shoulder_param, elbow_param, wrist_param)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
