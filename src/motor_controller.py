@@ -239,7 +239,12 @@ class ArmPoseChanger(JointController):
             pass
         rospy.sleep(3.0)
         res = self.controlEndeffector(True)
-        rospy.sleep(1.0)
+        rospy.sleep(1.5)
+        if not res:
+            self.controlEndeffector(False)
+            rospy.sleep(3.0)
+            res = self.controlEndeffector(True)
+            rospy.sleep(1.5)
         self.carryMode()
         return res
 
