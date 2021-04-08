@@ -94,7 +94,7 @@ class ObjectGrasper(ArmPoseChanger):
         rospy.loginfo('\n----- Grasp Object -----')
         self.moveBase(-0.5)
         if self.navigation_place == 'Null':
-            y = object_centroid.z + 0.02
+            y = object_centroid.z + 0.08
         else:
             y = self.target_place[self.navigation_place] + 0.06
         #x = (y-0.75)/10+0.5
