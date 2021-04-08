@@ -82,7 +82,7 @@ def actionMain(req):
     head_pub = rospy.Publisher('/servo/head',Float64,queue_size=1)
     rospy.sleep(0.2)
     endeffector_pub.publish(False)
-    head_pub.publish(30.0)
+    head_pub.publish(25.0)
     rospy.sleep(2.0)
     recognize_flg = True
     grasp_flg = False
