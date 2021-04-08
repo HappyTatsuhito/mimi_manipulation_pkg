@@ -114,7 +114,7 @@ bool ThreeDimensionalPositionEstimator::getDepth(mimi_manipulation_pkg::DetectDe
   //RealSenseの高さ調整
   float theta = 90-(38.46+head_angle);
   float head_height = 13.67*sin(theta*M_PI/180);
-  float realsense_height = neck_height + head_height;
+  float realsense_height = neck_height + (head_height/1000);
   
   res.centroid_point.x = centroid_x / 1000;
   res.centroid_point.y = centroid_y / 1000;
