@@ -204,6 +204,9 @@ class ArmPoseChanger(JointController):
         elif cmd == 'carry':
             self.carryMode()
             return True
+        elif cmd == 'receive':
+            res = self.receiveMode()
+            return res
         elif cmd == 'give':
             self.giveMode()
             return True
@@ -226,6 +229,17 @@ class ArmPoseChanger(JointController):
         wrist_param = 85
         self.armController(shoulder_param, elbow_param, wrist_param)
 
+    def receiveMode(self):
+        shoulder_param = -35
+        elbow_param = 75
+        wrist_param = -35
+        self.armController(shoulder_param, elbow_param, wrist_param)
+        while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
+            pass
+        rospy.sleep(3.0)
+        res = self.controlEndeffector(True)
+        return res
+
     def giveMode(self):
         shoulder_param = -35
         elbow_param = 75
@@ -233,7 +247,7 @@ class ArmPoseChanger(JointController):
         self.armController(shoulder_param, elbow_param, wrist_param)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
             pass
-        rospy.sleep(2.0)
+        rospy.sleep(1.5)
         wrist_error = abs(self.torque_error[3])
         give_time = time.time()
         while abs(wrist_error - abs(self.torque_error[3])) < 10 and time.time() - give_time < 5.0 and not rospy.is_shutdown():
