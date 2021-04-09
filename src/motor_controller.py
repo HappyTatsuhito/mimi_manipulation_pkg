@@ -13,7 +13,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from dynamixel_workbench_msgs.msg import DynamixelStateList
 # ros srvs
 from dynamixel_workbench_msgs.srv import DynamixelCommand
-from mimi_manipulation_pkg.srv import ManipulateSrv
+from mimi_manipulation_pkg.srv import ManipulateSrv, DetectDepth
 
 class MotorController(object):
     def __init__(self):
@@ -160,6 +160,9 @@ class ArmPoseChanger(JointController):
         super(ArmPoseChanger,self).__init__()
         # ROS Topic Subscriber
         arm_changer = rospy.Service('/servo/arm', ManipulateSrv, self.changeArmPose)
+        # ROS Service Client
+        self.detect_depth = rospy.ServiceProxy('/detect/depth', DetectDepth)
+        # ROS Param
         self.arm_specification = rosparam.get_param('/mimi_specification')
 
     def inverseKinematics(self, x, y):
@@ -230,23 +233,27 @@ class ArmPoseChanger(JointController):
         self.armController(shoulder_param, elbow_param, wrist_param)
 
     def receiveMode(self):
-        self.controlEndeffector(False)
         shoulder_param = -35
         elbow_param = 75
         wrist_param = -35
         self.armController(shoulder_param, elbow_param, wrist_param)
-        while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
-            pass
-        rospy.sleep(3.0)
-        res = self.controlEndeffector(True)
-        rospy.sleep(1.5)
-        if not res:
+
+        rospy.wait_for_service('/detect/depth')
+        endeffector_res = False
+        count = 0
+        while not endeffector_res and count<2 and not rospy.is_shutdown():
             self.controlEndeffector(False)
-            rospy.sleep(3.0)
-            res = self.controlEndeffector(True)
+            rospy.sleep(2.0)
+            count += 1
+            start_time = time.time()
+            straight_line_distance = 9.99
+            while time.time()-start_time<5.0 and straight_line_distance>0.6 and not rospy.is_shutdown():
+                depth_res = self.detect_depth(0, 0)
+                straight_line_distance = depth_res.centroid_point.x
+            endeffector_res = self.controlEndeffector(True)
             rospy.sleep(1.5)
         self.carryMode()
-        return res
+        return endeffector_res
 
     def giveMode(self):
         shoulder_param = -35
