@@ -117,9 +117,11 @@ class RecognizeTools(object):
         
         while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
             loop_count += 1
+            
             rotation_angle = 45 - (((loop_count)%4)/2) * 90
             mimi_control.angleRotation(rotation_angle)
             rospy.sleep(3.0)
+
             bbox_list = self.createBboxList(self.bbox)
             if object_name == 'None':
                 find_flg = bool(len(bbox_list))
