@@ -168,13 +168,15 @@ class RecognizeTools(object):
         object_centroid.y = numpy.nan
         object_centroid.z = numpy.nan
 
-        if object_name == 'None':
-            return object_centroid
-        
         bbox_list = self.createBboxList(bb)
-        object_count, _ = self.countObject(object_name)
-        exist_flg = bool(object_count)
-        
+        object_count, object_list = self.countObject(object_name)
+
+        if object_name == 'any':
+            exist_flg = bool(len(object_list))
+            if exist_flg: object_name = object_list[0]
+        else:
+            exist_flg = bool(object_count)
+
         if not exist_flg:
             return object_centroid
         
