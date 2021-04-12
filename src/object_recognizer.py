@@ -108,10 +108,13 @@ class RecognizeTools(object):
     def findObject(self, object_name='None'):
         rospy.loginfo('module type : Find')
         mimi_control = MimiControl()
+        
         if type(object_name) != str:
             object_name = object_name.target_name
+            
         find_flg, _ = self.countObject(object_name)
         loop_count = 0
+        
         while not find_flg and loop_count <= 3 and not rospy.is_shutdown():
             loop_count += 1
             rotation_angle = 45 - (((loop_count)%4)/2) * 90
@@ -128,12 +131,15 @@ class RecognizeTools(object):
             
     def countObject(self, object_name='None', bb=None):
         rospy.loginfo('module type : Count')
+        
         if bb is None:
             bb = self.bbox
         if type(object_name) != str:
             object_name = object_name.target_name
+            
         object_list = []
         bbox_list = self.createBboxList(bb)
+        
         if object_name == 'any':
             any_dict = {}
             for i in range(len(bbox_list)):
@@ -148,22 +154,30 @@ class RecognizeTools(object):
             object_list = bbox_list
         return object_count, object_list
 
-    def localizeObject(self, object_name, bb=None):
+    def localizeObject(self, object_name='None', bb=None):
         rospy.loginfo('module type : Localize')
         Detector = CallDetector()
+        
         if bb is None:
             bb = self.bbox
         if type(object_name) != str:
             object_name = object_name.target_name
+            
         object_centroid = Point()
+        object_centroid.x = numpy.nan
+        object_centroid.y = numpy.nan
+        object_centroid.z = numpy.nan
+
+        if object_name == 'None':
+            return object_centroid
+        
         bbox_list = self.createBboxList(bb)
         object_count, _ = self.countObject(object_name)
         exist_flg = bool(object_count)
+        
         if not exist_flg:
-            object_centroid.x = numpy.nan
-            object_centroid.y = numpy.nan
-            object_centroid.z = numpy.nan
             return object_centroid
+        
         index_num = bbox_list.index(object_name)
         center_x = int((bb[index_num].ymin + bb[index_num].ymax)/2)
         center_y = int((bb[index_num].xmin + bb[index_num].xmax)/2)
