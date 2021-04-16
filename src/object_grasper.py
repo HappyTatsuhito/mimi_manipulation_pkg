@@ -39,7 +39,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.act.start()
 
     def placeMode(self):
-        self.moveBase(-0.5)
+        self.moveBase(-0.6)
         y = self.target_place[self.navigation_place] + 0.2
         #x = (y-0.78)/10+0.5
         x = 0.5
@@ -51,7 +51,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.moveBase(0.8)
         rospy.sleep(2.0)
         self.moveBase(0.4)
-        self.armController(joint_angle[0], joint_angle[1]-0.6, joint_angle[2]+0.3)
+        self.armController(joint_angle[0], joint_angle[1]-34.4, joint_angle[2]+17.2)
         rospy.sleep(0.2)
         self.callMotorService(4, self.origin_angle[4])
         rospy.sleep(0.5)
@@ -94,9 +94,9 @@ class ObjectGrasper(ArmPoseChanger):
         rospy.loginfo('\n----- Grasp Object -----')
         self.moveBase(-0.5)
         if self.navigation_place == 'Null':
-            y = object_centroid.z + 0.08
+            y = object_centroid.z + 0.10
         else:
-            y = self.target_place[self.navigation_place] + 0.06
+            y = self.target_place[self.navigation_place] + 0.08
         #x = (y-0.75)/10+0.5
         x = 0.475
         joint_angle = self.inverseKinematics(x, y)
