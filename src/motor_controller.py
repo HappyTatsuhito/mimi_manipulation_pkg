@@ -214,10 +214,10 @@ class ArmPoseChanger(JointController):
             self.giveMode()
             return True
         elif cmd == 'place':
-            self.placeMode()
-            return True
+            res = self.placeMode()
+            return res
         else :
-            rospy.loginfo('No sudh change arm command.')
+            rospy.loginfo('No such change arm command.')
             return False
 
     def originMode(self):

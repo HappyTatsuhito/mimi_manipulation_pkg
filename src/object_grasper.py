@@ -40,23 +40,26 @@ class ObjectGrasper(ArmPoseChanger):
 
     def placeMode(self):
         self.moveBase(-0.6)
-        y = self.target_place[self.navigation_place] + 0.2
+        # 
+        y = self.target_place[self.navigation_place] + 0.10
         #x = (y-0.78)/10+0.5
         x = 0.5
         joint_angle = self.inverseKinematics(x, y)
         if numpy.nan in joint_angle:
-            return
+            return False
+        
         self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
         rospy.sleep(2.0)
-        self.moveBase(0.8)
+        self.moveBase(0.6)
         rospy.sleep(2.0)
         self.moveBase(0.4)
-        self.armController(joint_angle[0], joint_angle[1]-34.4, joint_angle[2]+17.2)
-        rospy.sleep(0.2)
-        self.callMotorService(4, self.origin_angle[4])
-        rospy.sleep(0.5)
-        self.moveBase(-0.3)
-        self.controlShoulder(joint_angle[0]+0.1)
+
+        joint_angle = self.inverseKinematics(x, y-0.1)
+        self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
+        self.controlEndeffector(False)
+
+        #self.moveBase(-0.3)
+        #self.controlShoulder(joint_angle[0]+0.1)
         self.moveBase(-0.9)
         self.changeArmPose('carry')
         self.navigation_place = 'Null'
