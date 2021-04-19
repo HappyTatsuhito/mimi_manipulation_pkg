@@ -263,7 +263,7 @@ class ArmPoseChanger(JointController):
         rospy.sleep(1.0)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
             pass
-        rospy.sleep(1.5)
+        rospy.sleep(1.0)
         wrist_error = abs(self.torque_error[3])
         give_time = time.time()
         while abs(wrist_error - abs(self.torque_error[3])) < 10 and time.time() - give_time < 5.0 and not rospy.is_shutdown():
