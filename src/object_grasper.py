@@ -41,7 +41,7 @@ class ObjectGrasper(ArmPoseChanger):
     def placeMode(self):
         self.moveBase(-0.6)
         # 
-        y = self.target_place[self.navigation_place] + 0.13
+        y = self.target_place[self.navigation_place] + 0.14
         #x = (y-0.78)/10+0.5
         x = 0.5
         joint_angle = self.inverseKinematics(x, y)
