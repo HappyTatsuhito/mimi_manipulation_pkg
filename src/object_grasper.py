@@ -34,7 +34,7 @@ class ObjectGrasper(ArmPoseChanger):
         self.act.register_preempt_callback(self.actionPreempt)
         # -- instance variables --
         self.navigation_place = 'Null'
-        self.target_place = {'Null':0.75, 'Eins':0.725, 'Zwei':0.70, 'Drei':0.690, 'vier':0.480}
+        self.target_place = {'Null':0.715, 'Eins':0.725, 'Zwei':0.67, 'Drei':0.690, 'vier':0.480}
 
         self.act.start()
 
