@@ -30,12 +30,16 @@ class MotorController(object):
         self.current_pose = [0]*6
         self.torque_error = [0]*6
         self.rotation_velocity = [0]*6
+
+        rospy.Timer(rospy.Duration(0.5), self.motorAnglePub)
         
     def getMotorStateCB(self, state):
         for i in range(6):
             self.current_pose[i] = state.dynamixel_state[i].present_position
             self.rotation_velocity[i] = abs(state.dynamixel_state[i].present_velocity)
             self.torque_error[i] = state.dynamixel_state[i].present_current
+
+    def motorAnglePub(self, event):
         deg_origin_angle = map(self.stepToDeg, self.origin_angle)
         deg_current_pose = map(self.stepToDeg, self.current_pose)
         current_deg_list = [x-y for (x,y) in zip(deg_current_pose, deg_origin_angle)]
@@ -45,7 +49,6 @@ class MotorController(object):
         pub_deg_list = Float64MultiArray(data=current_deg_list)
         #rospy.loginfo(pub_deg_list.data)
         self.motor_angle_pub.publish(pub_deg_list)
-        
 
     def callMotorService(self, motor_id, rotate_value):
         if type(rotate_value) == type(float()):
@@ -260,7 +263,7 @@ class ArmPoseChanger(JointController):
                 depth_res = self.detect_depth(280, 360)
                 straight_line_distance = depth_res.centroid_point.x
                 rospy.loginfo(straight_line_distance)
-            #rospy.sleep(1.0)
+            rospy.sleep(1.0)
             endeffector_res = self.controlEndeffector(True)
             rospy.sleep(1.5)
         self.carryMode()
