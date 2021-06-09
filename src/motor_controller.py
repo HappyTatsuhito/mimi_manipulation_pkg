@@ -257,15 +257,10 @@ class ArmPoseChanger(JointController):
             while time.time()-start_time<5.0 and straight_line_distance>0.42 and not rospy.is_shutdown():
                 depth_res = self.detect_depth(280, 360)
                 straight_line_distance = depth_res.centroid_point.x
-            '''
-            while not rospy.is_shutdown():
-                depth_res = self.detect_depth(280, 360)
-                straight_line_distance = depth_res.centroid_point.x
-                rospy.loginfo(straight_line_distance)
-            '''
             rospy.sleep(0.5)
             endeffector_res = self.controlEndeffector(True)
             rospy.sleep(1.5)
+            
         self.carryMode()
         self.controlHead(0)
         return endeffector_res
