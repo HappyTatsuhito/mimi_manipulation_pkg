@@ -263,7 +263,7 @@ class ArmPoseChanger(JointController):
                 straight_line_distance = depth_res.centroid_point.x
                 rospy.loginfo(straight_line_distance)
             '''
-            rospy.sleep(1.0)
+            rospy.sleep(0.5)
             endeffector_res = self.controlEndeffector(True)
             rospy.sleep(1.5)
         self.carryMode()
