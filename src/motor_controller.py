@@ -161,7 +161,8 @@ class JointController(MotorController):
 class ArmPoseChanger(JointController):
     def __init__(self):
         super(ArmPoseChanger,self).__init__()
-        # ROS Topic Subscriber
+        # ROS Service Server
+        arm_controller = rospy.Service('/servo/debug_arm', Float64MultiArray, self.armController)
         arm_changer = rospy.Service('/servo/arm', ManipulateSrv, self.changeArmPose)
         # ROS Service Client
         self.detect_depth = rospy.ServiceProxy('/detect/depth', DetectDepth)
@@ -190,10 +191,12 @@ class ArmPoseChanger(JointController):
             rospy.loginfo('I can not move arm.')
             return [numpy.nan]*3
         
-    def armController(self, shoulder_param, elbow_param, wrist_param):
-        thread_shoulder = threading.Thread(target=self.controlShoulder, args=(shoulder_param,))
-        thread_elbow = threading.Thread(target=self.controlElbow, args=(elbow_param,))
-        thread_wrist = threading.Thread(target=self.controlWrist, args=(wrist_param,))
+    def armController(self, joint_angle):
+        if type(joint_angle) != list:
+            joint_angle = joint_angle.data
+        thread_shoulder = threading.Thread(target=self.controlShoulder, args=(joint_angle[0],))
+        thread_elbow = threading.Thread(target=self.controlElbow, args=(joint_angle[1],))
+        thread_wrist = threading.Thread(target=self.controlWrist, args=(joint_angle[2],))
         thread_wrist.start()
         rospy.sleep(0.5)
         thread_elbow.start()
@@ -227,13 +230,13 @@ class ArmPoseChanger(JointController):
         shoulder_param = 0
         elbow_param = 0
         wrist_param = 0
-        self.armController(shoulder_param, elbow_param, wrist_param)
+        self.armController([shoulder_param, elbow_param, wrist_param])
         
     def carryMode(self):
         shoulder_param = -85
         elbow_param = 75
         wrist_param = 85
-        self.armController(shoulder_param, elbow_param, wrist_param)
+        self.armController([shoulder_param, elbow_param, wrist_param])
 
     def receiveMode(self):
         self.controlHead(25)
@@ -241,7 +244,7 @@ class ArmPoseChanger(JointController):
         shoulder_param = -40
         elbow_param = 70
         wrist_param = -30
-        self.armController(shoulder_param, elbow_param, wrist_param)
+        self.armController([shoulder_param, elbow_param, wrist_param])
         rospy.sleep(0.5)
         self.controlEndeffector(False)
 
@@ -269,7 +272,7 @@ class ArmPoseChanger(JointController):
         shoulder_param = -35
         elbow_param = 75
         wrist_param = -35
-        self.armController(shoulder_param, elbow_param, wrist_param)
+        self.armController([shoulder_param, elbow_param, wrist_param])
         rospy.sleep(1.0)
         while self.rotation_velocity[3] > 0 and not rospy.is_shutdown():
             pass
