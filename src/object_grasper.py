@@ -34,11 +34,11 @@ class ObjectGrasper(ArmPoseChanger):
         self.act.register_preempt_callback(self.actionPreempt)
         # -- instance variables --
         self.navigation_place = 'Null'
-        self.target_place = {'Null':0.715, 'Eins':0.725, 'Zwei':0.67, 'Drei':0.690, 'vier':0.480}
+        self.target_place = rosparam.get_param('/location_dict')
 
         self.act.start()
 
-    def placeMode(self):
+    def placeMode(self):#override
         self.moveBase(-0.6)
         # 
         y = self.target_place[self.navigation_place] + 0.14
@@ -48,14 +48,14 @@ class ObjectGrasper(ArmPoseChanger):
         if numpy.nan in joint_angle:
             return False
         
-        self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
+        self.armController(joint_angle)
         rospy.sleep(2.0)
         self.moveBase(0.6)
         rospy.sleep(2.0)
         self.moveBase(0.4)
 
         joint_angle = self.inverseKinematics(x, y-0.03)
-        self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
+        self.armController(joint_angle)
         rospy.sleep(2.0)
         self.controlEndeffector(False)
         rospy.sleep(2.0)
@@ -85,7 +85,9 @@ class ObjectGrasper(ArmPoseChanger):
         self.cmd_vel_pub.publish(cmd)
 
     def approachObject(self,object_centroid):
-        if object_centroid.x < 0.5 or object_centroid.x > 0.8:
+        if object_centroid.x > 1.5:
+            return False
+        elif object_centroid.x < 0.5 or object_centroid.x > 0.8:
             move_range = (object_centroid.x-0.65)*2.0
             if abs(move_range) < 0.3:
                 move_range = int(move_range/abs(move_range))*0.3
@@ -107,10 +109,10 @@ class ObjectGrasper(ArmPoseChanger):
         joint_angle = self.inverseKinematics(x, y)
         if numpy.nan in joint_angle:
             return False
-        self.armController(joint_angle[0], joint_angle[1], joint_angle[2])
+        self.armController(joint_angle)
         rospy.sleep(2.5)
         move_range = 0.5 + (object_centroid.x + 0.05 - x)*3.0
-        # 0.5:後退量, 0.05:realsenseからshoulderまでのx軸の距離, 3.3:moveBaseの数値に変換(おおよそ)
+        # 0.5:後退量, 0.05:realsenseからshoulderまでのx軸の距離, 3.0:moveBaseの数値に変換(おおよそ)
         self.moveBase(move_range*0.7)
         rospy.sleep(0.3)
         self.moveBase(move_range*0.4)
@@ -131,19 +133,12 @@ class ObjectGrasper(ArmPoseChanger):
         return grasp_flg
     
     def navigationPlaceCB(self,res):
-        target_dic = {'Eins':['desk', 'table'], 'Zwei':['cupboard'], 'Drei':['shelf'], 'vier':['chair', 'couch']}
-        for key,value in target_dic.items():
-            if res.data in value:
-                self.navigation_place = key
-                break
-            else:
-                self.navigation_place = 'Null'
+        self.navigation_place = res.data
 
     def startUp(self):
         _ = self.controlEndeffector(False)
         self.changeArmPose('carry')
         self.controlHead(0.0)
-
 
     def actionPreempt(self):
         rospy.loginfo('Preempt callback')
