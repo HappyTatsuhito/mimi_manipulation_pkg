@@ -50,7 +50,8 @@ class ObjectGrasper(ArmPoseChanger):
         self.moveBase(0.4)
 
         joint_angle = self.inverseKinematics([x, y-0.03])
-        self.armController(joint_angle)
+        if not (numpy.nan in joint_angle):
+            self.armController(joint_angle)
         rospy.sleep(2.0)
         self.controlEndeffector(False)
         rospy.sleep(2.0)
