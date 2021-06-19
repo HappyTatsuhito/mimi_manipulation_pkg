@@ -20,7 +20,7 @@ from motor_controller import ArmPoseChanger
 class ObjectGrasper(ArmPoseChanger):
     def __init__(self):
         super(ObjectGrasper,self).__init__()
-        navigation_place_sub = rospy.Subscriber('/current_location',String,self.navigationPlaceCB)
+        rospy.Subscriber('/current_location',String,self.navigationPlaceCB)
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size = 1)
         self.act = actionlib.SimpleActionServer('/manipulation/grasp',
                                                 ObjectGrasperAction,
