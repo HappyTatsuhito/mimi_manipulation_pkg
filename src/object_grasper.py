@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*
 
 import rospy
+import rosparam
 import time
 import math
 import numpy
