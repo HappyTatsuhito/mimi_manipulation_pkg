@@ -17,7 +17,7 @@ if __name__ == '__main__':
     arm_changer = rospy.ServiceProxy('/servo/arm', ManipulateSrv)
 
     rospy.loginfo('Controll Head')
-    rospy.publish(0.0)
+    head_controller.publish(0.0)
 
     rospy.wait_for_service('/servo/arm')
     _ = arm_changer('carry')
