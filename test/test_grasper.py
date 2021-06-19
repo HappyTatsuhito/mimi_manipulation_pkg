@@ -16,11 +16,13 @@ if __name__ == '__main__':
     head_controller = rospy.Publisher('/servo/head', Float64, queue_size=1)
     arm_changer = rospy.ServiceProxy('/servo/arm', ManipulateSrv)
 
-    rospy.sleep(1.0)
+    rospy.sleep(0.5)
     
     rospy.loginfo('Controll Head')
     head_controller.publish(0.0)
 
+    rospy.sleep(1.0)
+    
     rospy.wait_for_service('/servo/arm')
     _ = arm_changer('carry')
     rospy.loginfo('Change Arm')
