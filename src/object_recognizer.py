@@ -8,12 +8,10 @@ import numpy
 import rospy
 import rosparam
 import actionlib
-# -- ros msgs --
 from geometry_msgs.msg import Twist, Point
 from darknet_ros_msgs.msg import BoundingBoxes
-# -- ros srvs --
+# -- Custom Message --
 from mimi_manipulation_pkg.srv import RecognizeFind, RecognizeCount, RecognizeLocalize, DetectDepth
-# -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
 class MimiControl(object):
@@ -75,10 +73,10 @@ class CallDetector(object):
 
 class RecognizeTools(object):
     def __init__(self):
-        bounding_box_sub  = rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
-        recognize_find_srv = rospy.Service('/recognize/find',RecognizeFind,self.findObject)
-        recognize_count_srv = rospy.Service('/recognize/count',RecognizeCount,self.countObject)
-        recognize_localize_srv = rospy.Service('/recognize/localize',RecognizeLocalize,self.localizeObject)
+        rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,self.boundingBoxCB)
+        rospy.Service('/recognize/find',RecognizeFind,self.findObject)
+        rospy.Service('/recognize/count',RecognizeCount,self.countObject)
+        rospy.Service('/recognize/localize',RecognizeLocalize,self.localizeObject)
 
         self.object_dict = rosparam.get_param('/object_dict')
         self.bbox = []
@@ -216,7 +214,6 @@ class RecognizeAction(object):
         action_feedback = ObjectRecognizerFeedback()
         action_result = ObjectRecognizerResult()
         mimi_control = MimiControl()
-        #recognize_tools = RecognizeTools()
         move_count = 0
         while not rospy.is_shutdown():
             bb = self.recognize_tools.bbox
@@ -259,5 +256,4 @@ class RecognizeAction(object):
 if __name__ == '__main__':
     rospy.init_node('object_recognizer')
     recognize_action = RecognizeAction()
-    #recognize_action.recognize_tools.initializeBBox()
     rospy.spin()

@@ -7,24 +7,20 @@ import numpy
 import math
 import threading
 import time
-# ros msgs
 from std_msgs.msg import Bool, Float64, Float64MultiArray
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from dynamixel_workbench_msgs.msg import DynamixelStateList
-# ros srvs
 from dynamixel_workbench_msgs.srv import DynamixelCommand
+# -- Custom Message -- 
 from mimi_manipulation_pkg.srv import ManipulateSrv, DetectDepth
 
 class MotorController(object):
     def __init__(self):
-        # ROS Topic Subscriber
         rospy.Subscriber('/dynamixel_workbench/dynamixel_state',DynamixelStateList,self.getMotorStateCB)
-        # ROS Topic Publisher
         self.motor_pub = rospy.Publisher('/dynamixel_workbench/joint_trajectory',JointTrajectory,queue_size=10)
         self.motor_angle_pub = rospy.Publisher('/servo/angle_list',Float64MultiArray,queue_size=10)
-        # ROS Service Client
         self.motor_client = rospy.ServiceProxy('/dynamixel_workbench/dynamixel_command',DynamixelCommand)
-        # Motor Parameters
+        # -- Motor Parameters --
         self.origin_angle = rosparam.get_param('/mimi_specification/Origin_Angle')
         self.gear_ratio = rosparam.get_param('/mimi_specification/Gear_Ratio')
         self.current_pose = [0]*6
@@ -47,7 +43,6 @@ class MotorController(object):
         current_deg_list[2] *= -1
         current_deg_list[5] *= -1
         pub_deg_list = Float64MultiArray(data=current_deg_list)
-        #rospy.loginfo(pub_deg_list.data)
         self.motor_angle_pub.publish(pub_deg_list)
 
     def callMotorService(self, motor_id, rotate_value):
@@ -73,7 +68,6 @@ class MotorController(object):
 class JointController(MotorController):
     def __init__(self):
         super(JointController,self).__init__()
-        # ROS Topic Subscriber
         rospy.Subscriber('/servo/shoulder',Float64,self.controlShoulder)
         rospy.Subscriber('/servo/elbow',Float64,self.controlElbow)
         rospy.Subscriber('/servo/wrist',Float64,self.controlWrist)
@@ -161,15 +155,14 @@ class JointController(MotorController):
 class ArmPoseChanger(JointController):
     def __init__(self):
         super(ArmPoseChanger,self).__init__()
-        # ROS Service Server
-        arm_controller = rospy.Service('/servo/debug_arm', Float64MultiArray, self.armController)
-        arm_changer = rospy.Service('/servo/arm', ManipulateSrv, self.changeArmPose)
-        # ROS Service Client
+        rospy.Subscriber('/servo/debug_arm', Float64MultiArray, self.manipulateByInverseKinematics)
+        rospy.Service('/servo/arm', ManipulateSrv, self.changeArmPose)
         self.detect_depth = rospy.ServiceProxy('/detect/depth', DetectDepth)
-        # ROS Param
         self.arm_specification = rosparam.get_param('/mimi_specification')
 
-    def inverseKinematics(self, x, y):
+    def inverseKinematics(self, coordinate):
+        x = coordinate[0]
+        y = coordinate[1]
         l0 = self.arm_specification['Ground_Arm_Height']
         l1 = self.arm_specification['Shoulder_Elbow_Length']
         l2 = self.arm_specification['Elbow_Wrist_Length']
@@ -202,6 +195,13 @@ class ArmPoseChanger(JointController):
         thread_elbow.start()
         rospy.sleep(0.5)
         thread_shoulder.start()
+
+    def manipulateByInverseKinematics(coordinate):
+        joint_angle = self.inverseKinematics(coordinate)
+        if numpy.nan in joint_angle:
+            return False
+        self.armController()
+        return True
 
     def changeArmPose(self, cmd):
         if type(cmd) != str:

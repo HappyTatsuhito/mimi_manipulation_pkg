@@ -7,32 +7,27 @@ import math
 import numpy
 import threading
 import actionlib
-# -- ros msgs --
 from std_msgs.msg import Bool, Float64, String
 from dynamixel_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
-# --  ros srvs --
+# -- Custom Message --
 from mimi_manipulation_pkg.srv import ManipulateSrv
-# -- action msgs --
 from mimi_manipulation_pkg.msg import *
-# -- class inheritance --
+
 from motor_controller import ArmPoseChanger
 
 class ObjectGrasper(ArmPoseChanger):
     def __init__(self):
         super(ObjectGrasper,self).__init__()
-        # -- topic subscriber --
         navigation_place_sub = rospy.Subscriber('/current_location',String,self.navigationPlaceCB)
-        # -- topic publisher --
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel_mux/input/teleop',Twist,queue_size = 1)
-        # -- action server --
         self.act = actionlib.SimpleActionServer('/manipulation/grasp',
                                                 ObjectGrasperAction,
                                                 execute_cb = self.actionMain,
                                                 auto_start = False)
         self.act.register_preempt_callback(self.actionPreempt)
-        # -- instance variables --
+
         self.navigation_place = 'Null'
         self.target_place = rosparam.get_param('/location_dict')
 
@@ -40,11 +35,10 @@ class ObjectGrasper(ArmPoseChanger):
 
     def placeMode(self):#override
         self.moveBase(-0.6)
-        # 
         y = self.target_place[self.navigation_place] + 0.14
         #x = (y-0.78)/10+0.5
         x = 0.5
-        joint_angle = self.inverseKinematics(x, y)
+        joint_angle = self.inverseKinematics([x, y])
         if numpy.nan in joint_angle:
             return False
         
@@ -54,14 +48,11 @@ class ObjectGrasper(ArmPoseChanger):
         rospy.sleep(2.0)
         self.moveBase(0.4)
 
-        joint_angle = self.inverseKinematics(x, y-0.03)
+        joint_angle = self.inverseKinematics([x, y-0.03])
         self.armController(joint_angle)
         rospy.sleep(2.0)
         self.controlEndeffector(False)
         rospy.sleep(2.0)
-
-        #self.moveBase(-0.3)
-        #self.controlShoulder(joint_angle[0]+0.1)
         self.moveBase(-0.9)
         self.changeArmPose('carry')
         self.navigation_place = 'Null'
@@ -106,7 +97,7 @@ class ObjectGrasper(ArmPoseChanger):
             y = self.target_place[self.navigation_place] + 0.10
         #x = (y-0.75)/10+0.5
         x = 0.475
-        joint_angle = self.inverseKinematics(x, y)
+        joint_angle = self.inverseKinematics([x, y])
         if numpy.nan in joint_angle:
             return False
         self.armController(joint_angle)
@@ -147,7 +138,6 @@ class ObjectGrasper(ArmPoseChanger):
 
     def actionMain(self,object_centroid):
         target_centroid = object_centroid.grasp_goal
-        #grasp_feedback = ObjectGrasperFeedback()
         grasp_result = ObjectGrasperResult()
         grasp_flg = False
         approach_flg = self.approachObject(target_centroid)

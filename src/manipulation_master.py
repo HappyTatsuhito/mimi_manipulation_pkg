@@ -4,11 +4,9 @@
 import rospy
 import actionlib
 from enum import Enum
-# -- ros msgs --
 from std_msgs.msg import Bool, String, Float64
-# -- ros srvs --
+# -- Custom Message --
 from mimi_manipulation_pkg.srv import ManipulateSrv
-# -- action msgs --
 from mimi_manipulation_pkg.msg import *
 
 class ResultState(Enum):
@@ -102,6 +100,7 @@ def actionMain(req):
     
 if __name__ == '__main__':
     rospy.init_node('manipulation_master')
-    # -- service server --
-    manipulation = rospy.Service('/manipulation',ManipulateSrv, actionMain)
+    
+    rospy.Service('/manipulation',ManipulateSrv, actionMain)
+    
     rospy.spin()
