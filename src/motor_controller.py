@@ -155,7 +155,7 @@ class JointController(MotorController):
 class ArmPoseChanger(JointController):
     def __init__(self):
         super(ArmPoseChanger,self).__init__()
-        rospy.Subscriber('/servo/debug_arm', Float64MultiArray, self.manipulateByInverseKinematics)
+        #rospy.Service('/servo/debug_arm', , self.manipulateByInverseKinematics)
         rospy.Service('/servo/arm', ManipulateSrv, self.changeArmPose)
         self.detect_depth = rospy.ServiceProxy('/detect/depth', DetectDepth)
         self.arm_specification = rosparam.get_param('/mimi_specification')
@@ -197,6 +197,8 @@ class ArmPoseChanger(JointController):
         thread_shoulder.start()
 
     def manipulateByInverseKinematics(coordinate):
+        if type(coordinate) != float:
+            coordinate = coordinate.coordinate
         joint_angle = self.inverseKinematics(coordinate)
         if numpy.nan in joint_angle:
             return False
