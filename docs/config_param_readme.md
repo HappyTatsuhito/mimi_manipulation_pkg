@@ -1,4 +1,4 @@
-# Config Param Description  
+# Config&Param Description  
 各種ノードで使用される設定ファイルについて  
 機構に変更が合った場合は必ずこれら設定ファイルのパラメータを調整する必要があります。  
 このページはそのパラメータ調整の行い方・変数の説明について解説しています。  
@@ -81,5 +81,5 @@
 > 物体認識を補助するモジュールの使い方  
 ### [Grasperの使い方](/docs/grasper_readme.md)  
 > アームの制御を行うモジュールの使い方  
-### Config&Paramの設定方法  
+### [Config&Paramの設定方法](/docs/config_param_readme.md)  
 > ノードで読み込む設定ファイルの設定方法  

@@ -29,3 +29,5 @@ Jetson:
 > 物体認識を補助するモジュールの使い方  
 ### [Grasperの使い方](/docs/grasper_readme.md)  
 > アームの制御を行うモジュールの使い方  
+### [Config&Paramの設定方法](/docs/config_param_readme.md)  
+> ノードで読み込む設定ファイルの設定方法  
