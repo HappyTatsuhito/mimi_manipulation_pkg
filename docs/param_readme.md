@@ -69,8 +69,8 @@
   |Origin_Angle|アームを地面と水平にした際の各モータの角度|  
   |Gear_Ratio|各ジョイントのギア比（左からモータID順）|  
   
-該当する数値を適宜変更してください。  
-※Origin_Angleは定期的にメンテナンスすることを推奨  
+  該当する数値を適宜変更してください。  
+  ※Origin_Angleは定期的にメンテナンスすることを推奨  
   
 # Index  
 ### [パッケージの説明](https://github.com/HappyTatsuhito/mimi_manipulation_pkg)  
