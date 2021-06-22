@@ -1,5 +1,8 @@
 # Config Param Description  
-パラメータ調整の行い方・変数の説明  
+各種ノードで使用される設定ファイルについて  
+機構に変更が合った場合は必ずこれら設定ファイルのパラメータを調整する必要があります。  
+このページはそのパラメータ調整の行い方・変数の説明について解説しています。  
+  
   
 # Content  
 - **mimi_motor.yaml**（configに所属）  
@@ -8,6 +11,8 @@
 - **mimi_specification.yaml**（paramに所属)  
     > 各種ノードで使用するyamlファイル  
       ハードウェアの長さやアームの規格などmimiの仕様を記述する。  
+  
+使用するモータを変更した場合はmimi_motor.yamlを、機体に変更が合った場合はmimi_specification.yamlを変更してください。  
   
 # How to  
 ## mimi_motor.yaml  
@@ -64,3 +69,17 @@
   |Origin_Angle|アームを地面と水平にした際の各モータの角度|  
   |Gear_Ratio|各ジョイントのギア比（左からモータID順）|  
   
+該当する数値を適宜変更してください。  
+※Origin_Angleは定期的にメンテナンスすることを推奨  
+  
+# Index  
+### [パッケージの説明](https://github.com/HappyTatsuhito/mimi_manipulation_pkg)  
+> パッケージの概要、立ち上げ等の説明  
+### [Manipulation Masterの使い方](/docs/manipulation_master_readme.md)  
+> 物体認識から把持までの一連のタスクを行うマスターの使い方  
+### [Recognizerの使い方](/docs/recognizer_readme.md)  
+> 物体認識を補助するモジュールの使い方  
+### [Grasperの使い方](/docs/grasper_readme.md)  
+> アームの制御を行うモジュールの使い方  
+### Config&Paramの設定方法  
+> ノードで読み込む設定ファイルの設定方法  
