@@ -9,7 +9,6 @@ import numpy
 import threading
 import actionlib
 from std_msgs.msg import Bool, Float64, String
-from dynamixel_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 # -- Custom Message --
